@@ -1,17 +1,39 @@
-# React + Vite
+# MedPortal - DSW TFI Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend del sistema de turnos médicos, desarrollado con React.
 
-Currently, two official plugins are available:
+## Desarrollo local
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Desde la raíz del proyecto, en PowerShell:
 
-## React Compiler
+```powershell
+npm.cmd install
+npm.cmd run dev
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Abrí la dirección que indique la terminal.
 
-## Expanding the ESLint configuration
+## Pantallas disponibles
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-# DSW-TFI-Frontend
+- `/paciente/login`: acceso del paciente con email y DNI.
+- `/admin/login`: acceso del administrador con email y contraseña.
+- `/`: redirige al acceso del paciente.
+
+Ambos formularios usan React Hook Form y el componente compartido Input.
+Actualmente validan los datos de forma local; todavía no realizan el inicio de sesión contra la API.
+
+## Organización
+
+- `src/modules/auth`: páginas, formularios y servicios de autenticación.
+- `src/modules/shared/components`: componentes reutilizables, como Card e Input.
+- `src/index.css`: reglas globales básicas.
+- `src/App.css`: base del contenedor de la aplicación.
+
+## Verificaciones
+
+```powershell
+npm.cmd run lint
+npm.cmd run build
+```
+
+Los estilos específicos de cada pantalla permanecen junto a sus componentes.

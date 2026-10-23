@@ -6,6 +6,7 @@ import {
 
 import LoginPatientPage from "./modules/auth/pages/LoginPages/Patient/LoginPatientPage.jsx";
 import LoginAdminPage from "./modules/auth/pages/LoginPages/Admin/LoginAdminPage.jsx";
+import "./App.css";
 
 const router = createBrowserRouter([
   {
