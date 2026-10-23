@@ -1,32 +1,33 @@
-import { useState } from 'react'
-import LoginPatientPage from './modules/auth/pages/LoginPages/Patient/LoginPatientPage.jsx'
-import LoginAdminPage from './modules/auth/pages/LoginPages/Admin/LoginAdminPage.jsx'
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
+
+import LoginPatientPage from "./modules/auth/pages/LoginPages/Patient/LoginPatientPage.jsx";
+import LoginAdminPage from "./modules/auth/pages/LoginPages/Admin/LoginAdminPage.jsx";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Navigate to="/paciente/login" replace />,
+  },
+  {
+    path: "/paciente/login",
+    element: <LoginPatientPage />,
+  },
+  {
+    path: "/admin/login",
+    element: <LoginAdminPage />,
+  },
+  {
+    path: "*",
+    element: <h1>Página no encontrada</h1>,
+  },
+]);
+
 function App() {
-  const [pantalla, setPantalla] = useState('paciente')
-
-  return (
-    <>
-      <nav aria-label="Seleccionar acceso">
-        <button
-          type="button"
-          onClick={() => setPantalla('paciente')}
-        >
-          Paciente
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setPantalla('admin')}
-        >
-          Administrador
-        </button>
-      </nav>
-
-{pantalla === 'paciente'
-  ? <LoginPatientPage />
-  : <LoginAdminPage />}
-    </>
-  )
+  return <RouterProvider router={router} />;
 }
 
-export default App
+export default App;
