@@ -1,46 +1,72 @@
+import { useForm } from "react-hook-form";
+import Input from "../../../../shared/components/Input.jsx";
 import "./LoginPatientFormStyle.css";
-import { useState } from "react";
+
 function LoginForm() {
-const [email, setEmail] = useState("");
-const [dni, setDni] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      email: "",
+      dni: "",
+    },
+    mode: "onSubmit",
+  });
 
-    function handleSubmit(event) {
-    event.preventDefault();
-    console.log("Formato válido. Todavía no se llamó al backend.");
-}
+  function onSubmit(data) {
+    console.log("Formato válido. Todavía no se llamó al backend.", {
+      email: data.email,
+    });
+  }
 
-return (
-    <form className="FormularioInicioSesion" onSubmit={handleSubmit}>
-    <div>
-        <label htmlFor="email">Email</label>
-        <input
-            id="email"
-            type="email"
-            placeholder="✉︎  Nombre@correo.com"
-            required
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-        ></input>
-    </div>
-    <div>
-        <label htmlFor="dni">DNI / Numero de identificación</label>
-        <input
-            id="password"
-            type="text"
-            inputMode="numeric"
-            placeholder="🛈︎  Numero de documento"
-            required
-            pattern="[1-9][0-9]{6,7}"
-            title="Ingrese un DNI de 7 u 8 digitos, sin puntos ni espacios."
-            value={dni}
-            onChange={(event) => setDni(event.target.value)}
-        ></input>
-    </div>
+  return (
+    <form
+      className="FormularioInicioSesion"
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
+    >
+      <Input
+        id="patient-email"
+        label="Email"
+        type="email"
+        autoComplete="email"
+        placeholder="Nombre@correo.com"
+        required
+        error={errors.email?.message ?? ""}
+        {...register("email", {
+          required: "El email es obligatorio.",
+          pattern: {
+            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            message: "Ingresá un email válido.",
+          },
+        })}
+      />
 
-    <button className="BotonIngresar" type="submit">
+      <Input
+        id="patient-dni"
+        label="DNI / Número de identificación"
+        type="text"
+        inputMode="numeric"
+        placeholder="Número de documento"
+        required
+        error={errors.dni?.message ?? ""}
+        {...register("dni", {
+          required: "El DNI es obligatorio.",
+          pattern: {
+            value: /^[1-9][0-9]{6,7}$/,
+            message:
+              "Ingresá un DNI de 7 u 8 dígitos, sin puntos ni espacios y sin cero inicial.",
+          },
+        })}
+      />
+
+      <button className="BotonIngresar" type="submit">
         Ingresar
-    </button>
+      </button>
     </form>
-);
+  );
 }
+
 export default LoginForm;

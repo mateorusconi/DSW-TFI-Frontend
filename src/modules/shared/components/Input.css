@@ -1,0 +1,11 @@
+.shared-input {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.shared-input__error {
+  margin: 0;
+  color: #b42318;
+  font-size: 0.875rem;
+}

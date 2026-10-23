@@ -1,7 +1,7 @@
 import LoginForm from "../../../components/LoginComponents/LoginAdminComponents/LoginAdminForm.jsx";
 import "./LoginAdminPageStyle.css";
 import { ShieldPlus } from "lucide-react";
-
+import Card from "../../../../shared/components/Card.jsx";
 function LoginPage() {
   return (
     <main className="PaginaInicioSesion">
@@ -12,7 +12,7 @@ function LoginPage() {
 
         <h2 className="TituloPrincipal">MedPortal</h2>
       </div>
-      <section className="TarjetaInicioSesion">
+     <Card className="AdminLoginCard">
         <h1 className="TituloConsultorioAdmin">Bienvenido de nuevo</h1>
         <p className="TextoAyuda">
           Porfavor,autentiquense para acceder al portal de proveedores.{" "}
@@ -25,7 +25,7 @@ function LoginPage() {
             monitoreados para su cumplimiento.
           </p>
         </div>
-      </section>
+    </Card>
     </main>
   );
 }

@@ -1,9 +1,16 @@
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
 }
 
 body {
   margin: 0;
+  min-height: 100svh;
   font-family: system-ui, sans-serif;
   line-height: 1.5;
   color: #1f2937;
@@ -11,7 +18,24 @@ body {
 }
 
 input,
-button {
+button,
+select,
+textarea {
   font: inherit;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
 }
 
