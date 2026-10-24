@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import Input from "../../../../shared/components/Input.jsx";
+import Input from "../../../../shared/components/atoms/Input.jsx";
 import "./LoginPatientFormStyle.css";
 
 function LoginForm() {

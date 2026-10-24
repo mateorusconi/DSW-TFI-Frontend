@@ -1,0 +1,83 @@
+.data-table-container {
+  width: 100%;
+  overflow-x: auto;
+
+  background-color: white;
+  border: 1px solid #dbe4ee;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+}
+
+.data-table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+/* Encabezados de las columnas. */
+.data-table thead {
+  background-color: #edf5fc;
+}
+
+.data-table th {
+  padding: 16px 20px;
+  border-bottom: 1px solid #dbe4ee;
+
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #475569;
+}
+
+/* Celdas de datos. */
+.data-table td {
+  padding: 18px 20px;
+  border-bottom: 1px solid #e8eef5;
+  line-height: 1.6;
+  vertical-align: top;
+  color: #334155;
+}
+
+/* El contenedor ya tiene un borde inferior. */
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table tbody tr:hover {
+  background-color: #f5faff;
+}
+
+.table-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.table-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+  padding: 0;
+
+  border: none;
+  border-radius: 8px;
+  background-color: transparent;
+  color: #526d91;
+  cursor: pointer;
+}
+
+.table-actions button:hover {
+  background-color: #e8f1fb;
+  color: #075985;
+}
+
+.table-actions .table-actions__delete:hover {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}

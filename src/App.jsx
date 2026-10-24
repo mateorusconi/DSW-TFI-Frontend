@@ -3,7 +3,7 @@ import {
   Navigate,
   RouterProvider,
 } from "react-router-dom";
-
+import SpecialtiesListPage from "./modules/specialties/pages/SpecialtiesListPage.jsx";
 import LoginPatientPage from "./modules/auth/pages/LoginPages/Patient/LoginPatientPage.jsx";
 import LoginAdminPage from "./modules/auth/pages/LoginPages/Admin/LoginAdminPage.jsx";
 import "./App.css";
@@ -20,6 +20,10 @@ const router = createBrowserRouter([
   {
     path: "/admin/login",
     element: <LoginAdminPage />,
+  },
+  {
+    path: "/admin/especialidades",
+    element: <SpecialtiesListPage />,
   },
   {
     path: "*",

@@ -1,7 +1,6 @@
 import { useForm } from "react-hook-form";
 import "./LoginAdminFormStyle.css";
-import Input from "../../../../shared/components/Input.jsx";
-
+import Input from "../../../../shared/components/atoms/Input.jsx";
 function LoginForm() {
   const {
     register,
