@@ -1,0 +1,77 @@
+.specialties-page {
+  padding: 24px;
+}
+
+/* El contenedor distribuye las tarjetas. */
+.specialties-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+
+  list-style: none;
+  padding: 0;
+  margin: 24px 0 0;
+}
+
+/* Cada tarjeta define su aspecto. */
+.shared-card.specialties-stat {
+  height: 100%;
+  padding: 20px;
+
+  background-color: white;
+  border: 1px solid #dbe4ee;
+  border-left: 3px solid #075985;
+  border-radius: 6px;
+
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+/* El contenido interno. */
+.specialties-stat h2 {
+  margin: 0 0 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #475569;
+}
+
+.specialties-stat p {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #123b70;
+}
+
+.specialties-stat small {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+@media (max-width: 700px) {
+  .specialties-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+.specialties-page > header {
+  margin-bottom: 24px;
+}
+
+.specialties-page > header h1 {
+  margin: 0 0 8px;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  color: #153552;
+}
+
+.specialties-page > header p {
+  margin: 0;
+  max-width: 65ch;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #64748b;
+}
