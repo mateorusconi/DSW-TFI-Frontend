@@ -1,4 +1,0 @@
-/* Base de la aplicación; cada página define su propio layout. */
-#root {
-  min-height: 100svh;
-}

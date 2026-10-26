@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
-import Input from "../../../../shared/components/Input.jsx";
-import "./LoginPatientFormStyle.css";
+import "./LoginAdminFormStyle.css";
+import Input from "../../shared/components/atoms/Input.jsx";
 
 function LoginForm() {
   const {
@@ -10,7 +10,7 @@ function LoginForm() {
   } = useForm({
     defaultValues: {
       email: "",
-      dni: "",
+      password: "",
     },
     mode: "onSubmit",
   });
@@ -21,6 +21,7 @@ function LoginForm() {
     });
   }
 
+  
   return (
     <form
       className="FormularioInicioSesion"
@@ -28,10 +29,10 @@ function LoginForm() {
       noValidate
     >
       <Input
-        id="patient-email"
+        id="admin-email"
         label="Email"
         type="email"
-        autoComplete="email"
+        autoComplete="username"
         placeholder="Nombre@correo.com"
         required
         error={errors.email?.message ?? ""}
@@ -45,19 +46,18 @@ function LoginForm() {
       />
 
       <Input
-        id="patient-dni"
-        label="DNI / Número de identificación"
-        type="text"
-        inputMode="numeric"
-        placeholder="Número de documento"
+        id="admin-password"
+        label="Contraseña"
+        type="password"
+        autoComplete="current-password"
+        placeholder="Contraseña"
         required
-        error={errors.dni?.message ?? ""}
-        {...register("dni", {
-          required: "El DNI es obligatorio.",
-          pattern: {
-            value: /^[1-9][0-9]{6,7}$/,
-            message:
-              "Ingresá un DNI de 7 u 8 dígitos, sin puntos ni espacios y sin cero inicial.",
+        error={errors.password?.message ?? ""}
+        {...register("password", {
+          required: "La contraseña es obligatoria.",
+          minLength: {
+            value: 8,
+            message: "La contraseña debe tener al menos 8 caracteres.",
           },
         })}
       />
