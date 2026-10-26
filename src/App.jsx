@@ -1,33 +1,9 @@
-import {
-  createBrowserRouter,
-  Navigate,
-  RouterProvider,
-} from "react-router-dom";
+import { RouterProvider } from 'react-router-dom'
+import { router } from './router'
 
-import LoginPatientPage from "./modules/auth/pages/LoginPatientPage.jsx";
-import LoginAdminPage from "./modules/auth/pages/LoginAdminPage.jsx";
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Navigate to="/paciente/login" replace />,
-  },
-  {
-    path: "/paciente/login",
-    element: <LoginPatientPage />,
-  },
-  {
-    path: "/admin/login",
-    element: <LoginAdminPage />,
-  },
-  {
-    path: "*",
-    element: <h1>Página no encontrada</h1>,
-  },
-]);
-
+// En SCRUM-23 se suma acá el <AuthProvider> envolviendo al RouterProvider.
 function App() {
-  return <RouterProvider router={router} />;
+  return <RouterProvider router={router} />
 }
 
-export default App;
+export default App
