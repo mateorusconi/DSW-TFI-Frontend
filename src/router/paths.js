@@ -1,0 +1,17 @@
+export const PATHS = {
+  patientLogin: '/paciente/login',
+  adminLogin: '/admin/login',
+  adminHome: '/admin',
+  specialties: '/admin/especialidades',
+  specialtyNew: '/admin/especialidades/nueva',
+  specialtyEdit: (id) => `/admin/especialidades/${id}/editar`,
+  doctors: '/admin/medicos',
+  doctorNew: '/admin/medicos/nuevo',
+  doctorEdit: (id) => `/admin/medicos/${id}/editar`,
+  availability: '/admin/medicos/disponibilidad',
+  doctorAvailability: (id) => `/admin/medicos/${id}/disponibilidad`,
+  appointmentsSearch: '/admin/turnos',
+  bookAppointment: '/paciente/reservar',
+  myAppointments: '/paciente/mis-turnos',
+  componentsDemo: '/componentes',
+}

@@ -1,6 +1,6 @@
-import LoginForm from "../../../components/LoginComponents/LoginPatientComponents/LoginPatientForm.jsx";
-import "./LoginPatientPageStyle.css";
-import Card from "../../../../shared/components/atoms/Card.jsx";
+import LoginForm from '../components/LoginPatientForm.jsx'
+import './LoginPatientPageStyle.css'
+import Card from "../../shared/components/atoms/Card.jsx";
 function LoginPage() {
   return (
     <main className="PaginaInicioSesion">

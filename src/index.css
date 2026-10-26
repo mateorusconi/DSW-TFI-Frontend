@@ -1,3 +1,7 @@
+@import "tailwindcss";
+
+
+@layer base {
 *,
 *::before,
 *::after {
@@ -37,5 +41,8 @@ button:disabled {
 :focus-visible {
   outline: 2px solid #2563eb;
   outline-offset: 2px;
+}
+input, select, textarea { border: 1px solid var(--color-slate-300); border-radius: 0.375rem; }
+
 }
 

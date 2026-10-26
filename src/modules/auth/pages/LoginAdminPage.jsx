@@ -1,7 +1,7 @@
-import LoginForm from "../../../components/LoginComponents/LoginAdminComponents/LoginAdminForm.jsx";
+import LoginForm from "../components/LoginAdminForm.jsx";
 import "./LoginAdminPageStyle.css";
 import { ShieldPlus } from "lucide-react";
-import Card from "../../../../shared/components/atoms/Card.jsx";
+import Card from "../../shared/components/atoms/Card.jsx";
 function LoginPage() {
   return (
     <main className="PaginaInicioSesion">
