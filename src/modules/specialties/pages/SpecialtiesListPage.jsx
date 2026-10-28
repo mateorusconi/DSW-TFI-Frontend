@@ -2,6 +2,9 @@ import DataTable from "../../shared/components/organisms/DataTable.jsx";
 import Card from "../../shared/components/atoms/Card.jsx";
 import { Pencil, Trash2 } from "lucide-react";
 import "./SpecialtiesListPageStyle.css";
+import { Link } from "react-router-dom";
+import { PATHS } from "../../../router/paths.js";
+import { specialties } from "../Data/SpecialtiesMock.js";
 const columns = [
   {
     key: "name",
@@ -16,14 +19,13 @@ const columns = [
     header: "Acciones",
     render: (row) => (
       <div className="table-actions">
-        <button
-          type="button"
+        <Link
+          to={PATHS.specialtyEdit(row.id)}
           aria-label={`Editar ${row.name}`}
           title="Editar especialidad"
-          onClick={() => console.log("Editar especialidad:", row.id)}
         >
           <Pencil size={18} aria-hidden="true" />
-        </button>
+        </Link>
 
         <button
           type="button"
@@ -39,31 +41,18 @@ const columns = [
   },
 ];
 
-const specialties = [
-  {
-    id: "1",
-    name: "Cardiología",
-    description: "Diagnóstico y tratamiento de enfermedades del corazón.",
-  },
-  {
-    id: "2",
-    name: "Neurología",
-    description:
-      "Diagnóstico y tratamiento de enfermedades del sistema nervioso.",
-  },
-  {
-    id: "3",
-    name: "Dermatología",
-    description: "Atención de enfermedades de la piel.",
-  },
-];
-
 function SpecialtiesListPage() {
   return (
     <section className="specialties-page">
       <header>
         <h1>Directorio de Especialidades</h1>
         <p>Administrá las especialidades médicas del consultorio.</p>
+        <Link
+          to={PATHS.specialtyNew}
+          className="mt-4 inline-flex rounded-md bg-sky-900 px-4 py-2 text-sm text-white hover:bg-sky-800"
+        >
+          Nueva especialidad
+        </Link>
       </header>
       <div>
         <DataTable columns={columns} rows={specialties} />
