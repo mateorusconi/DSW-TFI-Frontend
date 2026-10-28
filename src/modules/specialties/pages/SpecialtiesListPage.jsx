@@ -5,43 +5,47 @@ import "./SpecialtiesListPageStyle.css";
 import { Link } from "react-router-dom";
 import { PATHS } from "../../../router/paths.js";
 import { specialties } from "../Data/SpecialtiesMock.js";
-const columns = [
-  {
-    key: "name",
-    header: "Nombre de la especialidad",
-  },
-  {
-    key: "description",
-    header: "Descripción",
-  },
-  {
-    key: "actions",
-    header: "Acciones",
-    render: (row) => (
-      <div className="table-actions">
-        <Link
-          to={PATHS.specialtyEdit(row.id)}
-          aria-label={`Editar ${row.name}`}
-          title="Editar especialidad"
-        >
-          <Pencil size={18} aria-hidden="true" />
-        </Link>
-
-        <button
-          type="button"
-          className="table-actions__delete"
-          aria-label={`Eliminar ${row.name}`}
-          title="Eliminar especialidad"
-          onClick={() => console.log("Eliminar especialidad:", row.id)}
-        >
-          <Trash2 size={18} aria-hidden="true" />
-        </button>
-      </div>
-    ),
-  },
-];
+import { useState } from "react";
+import ConfirmDialog from "../../shared/components/molecules/ConfirmDialog.jsx";
 
 function SpecialtiesListPage() {
+  const [specialtyToDelete, setSpecialtyToDelete] = useState(null);
+  const columns = [
+    {
+      key: "name",
+      header: "Nombre de la especialidad",
+    },
+    {
+      key: "description",
+      header: "Descripción",
+    },
+    {
+      key: "actions",
+      header: "Acciones",
+      render: (row) => (
+        <div className="table-actions">
+          <Link
+            to={PATHS.specialtyEdit(row.id)}
+            aria-label={`Editar ${row.name}`}
+            title="Editar especialidad"
+          >
+            <Pencil size={18} aria-hidden="true" />
+          </Link>
+
+          <button
+            type="button"
+            className="table-actions__delete"
+            aria-label={`Eliminar ${row.name}`}
+            title="Eliminar especialidad"
+            onClick={() => setSpecialtyToDelete(row)}
+          >
+            <Trash2 size={18} aria-hidden="true" />
+          </button>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <section className="specialties-page">
       <header>
@@ -82,6 +86,16 @@ function SpecialtiesListPage() {
           </Card>
         </li>
       </ul>
+
+      {specialtyToDelete !== null && (
+        <ConfirmDialog
+          title="Eliminar especialidad"
+          message={`¿Querés eliminar la especialidad "${specialtyToDelete.name}"? La eliminación estará disponible cuando conectemos la API.`}
+          confirmLabel="Eliminar"
+          confirmDisabled
+          onCancel={() => setSpecialtyToDelete(null)}
+        />
+      )}
     </section>
   );
 }
