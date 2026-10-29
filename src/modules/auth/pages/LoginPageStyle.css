@@ -1,0 +1,71 @@
+.login-page--patient {
+  background-color: #0c3ee2;
+}
+
+.login-page__title {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: #001661;
+}
+
+.login-page--admin .login-page__title {
+  font-size: 1.2rem;
+}
+
+.login-page__subtitle {
+  margin: 5px 0 7px;
+  font-size: 1.15rem;
+  font-weight: 500;
+}
+
+.login-page__help {
+  margin: 10px 0;
+  font-size: 0.875rem;
+  color: #000408c2;
+}
+
+.login-page--admin .login-page__help {
+  margin-top: 0;
+}
+
+.login-page--patient .login-page__title,
+.login-page--patient .login-page__subtitle,
+.login-page--patient .login-page__help {
+  text-align: center;
+}
+
+.login-page__support-text {
+  margin-bottom: 0;
+  font-size: smaller;
+}
+
+.login-page__support-link {
+  font-size: small;
+}
+
+.login-page__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  margin-bottom: 24px;
+}
+
+.login-page__brand-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 56px;
+  border-radius: 8px;
+  color: #001661;
+  background-color: white;
+}
+
+.login-page__brand-title {
+  margin: 0;
+  font-size: 150%;
+  color: white;
+}

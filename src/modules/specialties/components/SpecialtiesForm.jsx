@@ -1,15 +1,17 @@
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import Input from "../../shared/components/atoms/Input.jsx";
-import { PATHS } from "../../../router/paths.js";
+
+const EMPTY_VALUES = {
+  name: "",
+  description: "",
+};
 
 function SpecialtyForm({
   onSubmit,
+  cancelTo,
   submitLabel = "Guardar especialidad",
-  initialValues = {
-    name: "",
-    description: "",
-  },
+  initialValues = EMPTY_VALUES,
 }) {
   const {
     register,
@@ -87,7 +89,7 @@ function SpecialtyForm({
 
       <div className="flex justify-end gap-3 border-t border-slate-200 pt-5">
         <Link
-          to={PATHS.specialties}
+          to={cancelTo}
           className="rounded-md border border-slate-300 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
         >
           Cancelar

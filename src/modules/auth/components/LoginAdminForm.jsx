@@ -1,8 +1,9 @@
 import { useForm } from "react-hook-form";
-import "./LoginAdminFormStyle.css";
 import Input from "../../shared/components/atoms/Input.jsx";
+import { emailRules, passwordRules } from "../validation/loginRules.js";
+import "./LoginFormStyle.css";
 
-function LoginForm() {
+function LoginAdminForm({ onSubmit }) {
   const {
     register,
     handleSubmit,
@@ -15,16 +16,9 @@ function LoginForm() {
     mode: "onSubmit",
   });
 
-  function onSubmit(data) {
-    console.log("Formato válido. Todavía no se llamó al backend.", {
-      email: data.email,
-    });
-  }
-
-  
   return (
     <form
-      className="FormularioInicioSesion"
+      className="login-form"
       onSubmit={handleSubmit(onSubmit)}
       noValidate
     >
@@ -36,13 +30,7 @@ function LoginForm() {
         placeholder="Nombre@correo.com"
         required
         error={errors.email?.message ?? ""}
-        {...register("email", {
-          required: "El email es obligatorio.",
-          pattern: {
-            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-            message: "Ingresá un email válido.",
-          },
-        })}
+        {...register("email", emailRules)}
       />
 
       <Input
@@ -53,20 +41,14 @@ function LoginForm() {
         placeholder="Contraseña"
         required
         error={errors.password?.message ?? ""}
-        {...register("password", {
-          required: "La contraseña es obligatoria.",
-          minLength: {
-            value: 8,
-            message: "La contraseña debe tener al menos 8 caracteres.",
-          },
-        })}
+        {...register("password", passwordRules)}
       />
 
-      <button className="BotonIngresar" type="submit">
+      <button className="login-form__submit" type="submit">
         Ingresar
       </button>
     </form>
   );
 }
 
-export default LoginForm;
+export default LoginAdminForm;

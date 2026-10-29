@@ -1,8 +1,8 @@
 import { Link, useParams } from "react-router-dom";
-import PageHeader from "../../shared/components/molecules/PageHeader.jsx";
-import SpecialtyForm from "../components/SpecialtiesForm.jsx";
-import { specialties } from "../Data/SpecialtiesMock.js";
 import { PATHS } from "../../../router/paths.js";
+import PageHeader from "../../shared/components/molecules/PageHeader.jsx";
+import { specialties } from "../Data/SpecialtiesMock.js";
+import SpecialtyForm from "../components/SpecialtiesForm.jsx";
 
 function SpecialtyFormPage() {
   const { id } = useParams();
@@ -13,9 +13,7 @@ function SpecialtyFormPage() {
   if (isEditing && !specialty) {
     return (
       <section>
-        <h1 className="text-2xl font-semibold">
-          Especialidad no encontrada
-        </h1>
+        <h1 className="text-2xl font-semibold">Especialidad no encontrada</h1>
 
         <Link
           to={PATHS.specialties}
@@ -27,16 +25,14 @@ function SpecialtyFormPage() {
     );
   }
 
-  const title = isEditing
-    ? "Editar especialidad"
-    : "Registrar nueva especialidad";
+  const title = isEditing ? "Editar especialidad" : "Registrar nueva especialidad";
 
   const initialValues = {
     name: specialty?.name ?? "",
     description: specialty?.description ?? "",
   };
 
-  function onSubmit(data) {
+  function handleSave(data) {
     console.log("Datos válidos, todavía sin guardar:", {
       id,
       ...data,
@@ -59,9 +55,11 @@ function SpecialtyFormPage() {
       </p>
 
       <SpecialtyForm
+        // React Hook Form toma los valores iniciales al montar el formulario.
         key={id ?? "new"}
         initialValues={initialValues}
-        onSubmit={onSubmit}
+        onSubmit={handleSave}
+        cancelTo={PATHS.specialties}
         submitLabel={isEditing ? "Guardar cambios" : "Guardar especialidad"}
       />
     </section>

@@ -23,7 +23,7 @@ import NotFoundPage from '../modules/shared/pages/NotFoundPage'
 export const router = createBrowserRouter([
   { path: '/', element: <Navigate to={PATHS.patientLogin} replace /> },
 
-  // Logins: sueltos por ahora (en SCRUM-20/21 pasan adentro de AuthLayout)
+  // Logins públicos: cada página compone el marco compartido AuthLayout.
   { path: PATHS.patientLogin, element: <LoginPatientPage /> },
   { path: PATHS.adminLogin, element: <LoginAdminPage /> },
 
