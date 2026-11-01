@@ -1,31 +1,30 @@
-import axios from "axios";
+import { ApiError, toApiError } from "../api/apiError.js";
 
 export function getValidationErrors(error) {
-  if (
-    !axios.isAxiosError(error) ||
-    error.response?.status !== 400
-  ) {
+  const apiError = toApiError(error);
+
+  if (!(apiError instanceof ApiError) || apiError.status !== 400) {
     return {};
   }
 
-  const details = error.response.data?.details;
-
-  if (!Array.isArray(details)) {
-    return {};
-  }
-
-  const validDetails = details.filter(
+  const validDetails = apiError.details.filter(
     (detail) =>
       typeof detail?.field === "string" &&
       detail.field.trim() !== "" &&
       typeof detail?.issue === "string" &&
-      detail.issue.trim() !== ""
+      detail.issue.trim() !== "",
   );
 
   return Object.fromEntries(
-    validDetails.map(({ field, issue }) => [
-      field,
-      issue === "required" ? "Este campo es obligatorio." : issue,
-    ])
+    validDetails.map(({ field, issue }) => {
+      const fieldName = field.trim();
+      const normalizedField =
+        fieldName.charAt(0).toLowerCase() + fieldName.slice(1);
+
+      return [
+        normalizedField,
+        issue === "required" ? "Este campo es obligatorio." : issue,
+      ];
+    }),
   );
 }
