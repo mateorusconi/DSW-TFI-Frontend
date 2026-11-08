@@ -9,6 +9,9 @@ export async function fetchDemoRows({
   pageSize = 10,
   name = "",
 } = {}) {
+  // Demora artificial exclusiva de la demo.
+  await new Promise((resolve) => setTimeout(resolve, 800));
+
   const filteredRows = DEMO_ROWS.filter((row) =>
     row.name.toLowerCase().includes(name.toLowerCase()),
   );
