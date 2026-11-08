@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { PATHS } from "../../../router/paths.js";
 
 import ConfirmDialog from "../../shared/components/molecules/ConfirmDialog.jsx";
@@ -7,17 +7,28 @@ import PageHeader from "../../shared/components/molecules/PageHeader.jsx";
 import Pagination from "../../shared/components/molecules/Pagination.jsx";
 import SearchBar from "../../shared/components/molecules/SearchBar.jsx";
 import DataTable from "../../shared/components/organisms/DataTable.jsx";
+import { getErrorMessage } from "../../shared/helpers/getErrorMessage.js";
 import { usePaginatedList } from "../../shared/hooks/usePaginatedList.js";
 
 import SpecialtyActions from "../components/SpecialtyActions.jsx";
-import { getSpecialties } from "../services/specialtiesService.js";
+import {
+  deleteSpecialty,
+  getSpecialties,
+} from "../services/specialtiesService.js";
 import "./SpecialtiesListPageStyle.css";
 
 const PAGE_SIZE = 10;
 
 function SpecialtiesListPage() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [filters, setFilters] = useState({ name: "" });
   const [specialtyToDelete, setSpecialtyToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+
+  const successMessage = location.state?.successMessage;
 
   const { items, total, pageIndex, setPageIndex, loading, error, reload } =
     usePaginatedList(getSpecialties, {
@@ -27,6 +38,52 @@ function SpecialtiesListPage() {
 
   function handleSearch(text) {
     setFilters({ name: text });
+  }
+
+  function dismissSuccessMessage() {
+    navigate(PATHS.specialties, {
+      replace: true,
+      state: null,
+    });
+  }
+
+  function openDeleteDialog(specialty) {
+    setDeleteError("");
+    setSpecialtyToDelete(specialty);
+  }
+
+  function closeDeleteDialog() {
+    if (isDeleting) return;
+
+    setSpecialtyToDelete(null);
+    setDeleteError("");
+  }
+
+  async function handleDelete() {
+    if (!specialtyToDelete || isDeleting) return;
+
+    setIsDeleting(true);
+    setDeleteError("");
+
+    try {
+      await deleteSpecialty(specialtyToDelete.id);
+    } catch (error) {
+      setDeleteError(getErrorMessage(error));
+      return;
+    } finally {
+      setIsDeleting(false);
+    }
+
+    setSpecialtyToDelete(null);
+
+    navigate(PATHS.specialties, {
+      replace: true,
+      state: {
+        successMessage: "Especialidad eliminada correctamente.",
+      },
+    });
+
+    reload();
   }
 
   const columns = [
@@ -42,10 +99,7 @@ function SpecialtiesListPage() {
       key: "actions",
       header: "Acciones",
       render: (specialty) => (
-        <SpecialtyActions
-          specialty={specialty}
-          onDelete={setSpecialtyToDelete}
-        />
+        <SpecialtyActions specialty={specialty} onDelete={openDeleteDialog} />
       ),
     },
   ];
@@ -64,6 +118,23 @@ function SpecialtiesListPage() {
           </Link>
         }
       />
+
+      {successMessage && (
+        <div
+          role="status"
+          className="mb-4 flex items-center justify-between gap-3 rounded-md border border-green-200 bg-green-50 p-4 text-green-800"
+        >
+          <p>{successMessage}</p>
+
+          <button
+            type="button"
+            onClick={dismissSuccessMessage}
+            className="rounded-md px-2 py-1 text-sm underline"
+          >
+            Cerrar
+          </button>
+        </div>
+      )}
 
       <SearchBar placeholder="Buscar especialidad..." onSearch={handleSearch} />
 
@@ -99,10 +170,12 @@ function SpecialtiesListPage() {
       {specialtyToDelete !== null && (
         <ConfirmDialog
           title="Eliminar especialidad"
-          message={`¿Querés eliminar la especialidad "${specialtyToDelete.name}"? La eliminación todavía no está habilitada.`}
+          message={`¿Querés eliminar la especialidad "${specialtyToDelete.name}"?`}
           confirmLabel="Eliminar"
-          confirmDisabled
-          onCancel={() => setSpecialtyToDelete(null)}
+          loading={isDeleting}
+          error={deleteError}
+          onConfirm={handleDelete}
+          onCancel={closeDeleteDialog}
         />
       )}
     </section>

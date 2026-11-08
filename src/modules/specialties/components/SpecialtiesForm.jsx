@@ -1,6 +1,8 @@
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import Input from "../../shared/components/atoms/Input.jsx";
+import { applyFieldErrors } from "../../shared/helpers/applyFieldErrors.js";
+import { getErrorMessage } from "../../shared/helpers/getErrorMessage.js";
 
 const EMPTY_VALUES = {
   name: "",
@@ -16,15 +18,51 @@ function SpecialtyForm({
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    setError,
+    clearErrors,
+    formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: initialValues,
   });
 
+  async function submitForm(data) {
+    clearErrors();
+
+    try {
+      await onSubmit(data);
+    } catch (error) {
+      if (error?.errorCode === "SPECIALITY_NAME_CONFLICT") {
+        setError(
+          "name",
+          {
+            type: "server",
+            message: "Ya existe una especialidad con ese nombre.",
+          },
+          { shouldFocus: true },
+        );
+
+        return;
+      }
+
+      const hasFieldErrors = applyFieldErrors(error, setError, [
+        "name",
+        "description",
+      ]);
+
+      if (!hasFieldErrors) {
+        setError("root.server", {
+          type: "server",
+          message: getErrorMessage(error),
+        });
+      }
+    }
+  }
+
   return (
     <form
       className="space-y-5 rounded-lg border border-slate-200 bg-white p-6"
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(submitForm)}
+      aria-busy={isSubmitting}
       noValidate
     >
       <Input
@@ -32,6 +70,7 @@ function SpecialtyForm({
         label="Nombre de la especialidad"
         placeholder="Ej.: Cardiología"
         required
+        readOnly={isSubmitting}
         error={errors.name?.message ?? ""}
         {...register("name", {
           setValueAs: (value) => value.trim(),
@@ -58,6 +97,7 @@ function SpecialtyForm({
           className="block w-full resize-y p-3"
           placeholder="Describí el alcance de la especialidad."
           required
+          readOnly={isSubmitting}
           aria-invalid={Boolean(errors.description)}
           aria-describedby={
             errors.description ? "specialty-description-error" : undefined
@@ -87,6 +127,15 @@ function SpecialtyForm({
         )}
       </div>
 
+      {errors.root?.server && (
+        <p
+          role="alert"
+          className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800"
+        >
+          {errors.root.server.message}
+        </p>
+      )}
+
       <div className="flex justify-end gap-3 border-t border-slate-200 pt-5">
         <Link
           to={cancelTo}
@@ -97,9 +146,10 @@ function SpecialtyForm({
 
         <button
           type="submit"
-          className="rounded-md bg-sky-900 px-4 py-2 text-sm text-white hover:bg-sky-800"
+          disabled={isSubmitting}
+          className="rounded-md bg-sky-900 px-4 py-2 text-sm text-white hover:bg-sky-800 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {submitLabel}
+          {isSubmitting ? "Guardando..." : submitLabel}
         </button>
       </div>
     </form>

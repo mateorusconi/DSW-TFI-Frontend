@@ -1,19 +1,34 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+
 import { PATHS } from "../../../router/paths.js";
 import PageHeader from "../../shared/components/molecules/PageHeader.jsx";
-import { specialties } from "../Data/SpecialtiesMock.js";
 import SpecialtyForm from "../components/SpecialtiesForm.jsx";
+import {
+  createSpecialty,
+  updateSpecialty,
+} from "../services/specialtiesService.js";
 
 function SpecialtyFormPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const { id } = useParams();
+
   const isEditing = id !== undefined;
+  const specialty = location.state?.specialty;
 
-  const specialty = specialties.find((item) => item.id === id);
+  const hasEditingData =
+    specialty?.id === id &&
+    typeof specialty?.name === "string" &&
+    typeof specialty?.description === "string";
 
-  if (isEditing && !specialty) {
+  if (isEditing && !hasEditingData) {
     return (
       <section>
-        <h1 className="text-2xl font-semibold">Especialidad no encontrada</h1>
+        <h1 className="text-2xl font-semibold">Volvé al listado para editar</h1>
+
+        <p className="mt-2 text-sm text-slate-600">
+          Seleccioná una especialidad desde el listado para cargar sus datos.
+        </p>
 
         <Link
           to={PATHS.specialties}
@@ -25,17 +40,29 @@ function SpecialtyFormPage() {
     );
   }
 
-  const title = isEditing ? "Editar especialidad" : "Registrar nueva especialidad";
+  const title = isEditing
+    ? "Editar especialidad"
+    : "Registrar nueva especialidad";
 
   const initialValues = {
-    name: specialty?.name ?? "",
-    description: specialty?.description ?? "",
+    name: isEditing ? specialty.name : "",
+    description: isEditing ? specialty.description : "",
   };
 
-  function handleSave(data) {
-    console.log("Datos válidos, todavía sin guardar:", {
-      id,
-      ...data,
+  async function handleSave(data) {
+    if (isEditing) {
+      await updateSpecialty(id, data);
+    } else {
+      await createSpecialty(data);
+    }
+
+    navigate(PATHS.specialties, {
+      replace: true,
+      state: {
+        successMessage: isEditing
+          ? "Especialidad actualizada correctamente."
+          : "Especialidad creada correctamente.",
+      },
     });
   }
 
@@ -50,12 +77,7 @@ function SpecialtyFormPage() {
         ]}
       />
 
-      <p className="mb-4 text-sm text-slate-500">
-        Prototipo: los datos todavía no se guardan.
-      </p>
-
       <SpecialtyForm
-        // React Hook Form toma los valores iniciales al montar el formulario.
         key={id ?? "new"}
         initialValues={initialValues}
         onSubmit={handleSave}

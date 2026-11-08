@@ -7,6 +7,7 @@ function SpecialtyActions({ specialty, onDelete }) {
     <div className="table-actions">
       <Link
         to={PATHS.specialtyEdit(specialty.id)}
+        state={{ specialty }}
         aria-label={`Editar ${specialty.name}`}
         title="Editar especialidad"
       >
