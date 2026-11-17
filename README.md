@@ -12,10 +12,10 @@ La base compartida de Axios, almacenamiento de sesión, errores y fechas está i
 
 | Integrante | Legajo |
 | --- | --- |
-| Fabrizzio Calliari | Pendiente de completar |
-| Franco Germán Martínez Soria | Pendiente de completar |
-| Gonzalo Ruiz | Pendiente de completar |
-| Mateo Rusconi | Pendiente de completar |
+| Fabrizzio Calliari |  |
+| Franco Germán Martínez Soria |  |
+| Gonzalo Ruiz |  |
+| Mateo Rusconi |  |
 
 ## Requisitos y desarrollo local
 
