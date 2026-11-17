@@ -1,8 +1,9 @@
 import { useForm } from "react-hook-form";
 import Input from "../../shared/components/atoms/Input.jsx";
-import "./LoginPatientFormStyle.css";
+import { dniRules, emailRules } from "../validation/loginRules.js";
+import "./LoginFormStyle.css";
 
-function LoginForm() {
+function LoginPatientForm({ onSubmit }) {
   const {
     register,
     handleSubmit,
@@ -15,15 +16,9 @@ function LoginForm() {
     mode: "onSubmit",
   });
 
-  function onSubmit(data) {
-    console.log("Formato válido. Todavía no se llamó al backend.", {
-      email: data.email,
-    });
-  }
-
   return (
     <form
-      className="FormularioInicioSesion"
+      className="login-form"
       onSubmit={handleSubmit(onSubmit)}
       noValidate
     >
@@ -35,13 +30,7 @@ function LoginForm() {
         placeholder="Nombre@correo.com"
         required
         error={errors.email?.message ?? ""}
-        {...register("email", {
-          required: "El email es obligatorio.",
-          pattern: {
-            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-            message: "Ingresá un email válido.",
-          },
-        })}
+        {...register("email", emailRules)}
       />
 
       <Input
@@ -52,21 +41,14 @@ function LoginForm() {
         placeholder="Número de documento"
         required
         error={errors.dni?.message ?? ""}
-        {...register("dni", {
-          required: "El DNI es obligatorio.",
-          pattern: {
-            value: /^[1-9][0-9]{6,7}$/,
-            message:
-              "Ingresá un DNI de 7 u 8 dígitos, sin puntos ni espacios y sin cero inicial.",
-          },
-        })}
+        {...register("dni", dniRules)}
       />
 
-      <button className="BotonIngresar" type="submit">
+      <button className="login-form__submit" type="submit">
         Ingresar
       </button>
     </form>
   );
 }
 
-export default LoginForm;
+export default LoginPatientForm;

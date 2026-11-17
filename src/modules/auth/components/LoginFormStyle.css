@@ -1,0 +1,22 @@
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 5px;
+}
+
+.login-form__submit {
+  min-height: 44px;
+  padding: 10px 40px;
+  color: white;
+  background-color: #001d60;
+  cursor: pointer;
+}
+
+.login-form__submit:hover {
+  background-color: #39569b;
+}

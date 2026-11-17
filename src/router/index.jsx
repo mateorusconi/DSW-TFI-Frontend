@@ -9,7 +9,7 @@ import LoginPatientPage from '../modules/auth/pages/LoginPatientPage'
 import LoginAdminPage from '../modules/auth/pages/LoginAdminPage'
 import AdminHomePage from '../modules/home/pages/AdminHomePage'
 import SpecialtiesListPage from '../modules/specialties/pages/SpecialtiesListPage'
-import SpecialtyFormPage from '../modules/specialties/pages/SpecialtyFormPage'
+import SpecialtyFormPage from '../modules/specialties/pages/SpecialtiesFormPage.jsx'
 import DoctorsListPage from '../modules/doctors/pages/DoctorsListPage'
 import DoctorFormPage from '../modules/doctors/pages/DoctorFormPage'
 import DoctorAvailabilityPage from '../modules/availabilities/pages/DoctorAvailabilityPage'
@@ -23,7 +23,7 @@ import NotFoundPage from '../modules/shared/pages/NotFoundPage'
 export const router = createBrowserRouter([
   { path: '/', element: <Navigate to={PATHS.patientLogin} replace /> },
 
-  // Logins: sueltos por ahora (en SCRUM-20/21 pasan adentro de AuthLayout)
+  // Logins públicos: cada página compone el marco compartido AuthLayout.
   { path: PATHS.patientLogin, element: <LoginPatientPage /> },
   { path: PATHS.adminLogin, element: <LoginAdminPage /> },
 
