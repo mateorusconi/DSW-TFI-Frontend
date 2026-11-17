@@ -1,7 +1,9 @@
 import { useState } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 import Sidebar from '../organisms/Sidebar'
 import AdminHeader from '../organisms/AdminHeader'
+import { useAuth } from '../../../auth/hooks/useAuth'
+import { PATHS } from '../../../../router/paths'
 
 /**
  * Template: AdminLayout (marco de todas las pantallas del administrador)
@@ -18,8 +20,12 @@ function AdminLayout() {
     const [menuOpen, setMenuOpen] = useState(false)
 
     const closeMenu = () => setMenuOpen(false)
-    // shortcut: logout vacío hasta SCRUM-23; ahí va useAuth().logout + navigate(PATHS.adminLogin)
-    const handleLogout = () => {}
+    const { logout } = useAuth()
+const navigate = useNavigate()
+const handleLogout = () => {
+    logout()
+    navigate(PATHS.adminLogin, { replace: true })
+}
 
     return (
         <div className="min-h-screen bg-slate-50 md:flex">

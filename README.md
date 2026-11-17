@@ -6,16 +6,16 @@ Frontend del sistema de turnos médicos, desarrollado con React y Vite.
 
 La base compartida de Axios, almacenamiento de sesión, errores y fechas está implementada. Los formularios de login validan localmente, pero todavía no llaman a la API. Especialidades usa datos de ejemplo: crear y editar no persisten cambios y la confirmación de eliminación está deshabilitada.
 
-**Importante:** `ProtectedRoute` es provisorio y actualmente deja pasar a todas las rutas. Todavía no hay `AuthProvider` ni protección efectiva de navegación por rol. Esta versión es un prototipo en desarrollo, no una aplicación con autenticación terminada.
+`AuthProvider` comparte la sesión con toda la app y `ProtectedRoute` controla el acceso por rol.
 
 ## Integrantes
 
 | Integrante | Legajo |
 | --- | --- |
-| Fabrizzio Calliari | Pendiente de completar |
-| Franco Germán Martínez Soria | Pendiente de completar |
-| Gonzalo Ruiz | Pendiente de completar |
-| Mateo Rusconi | Pendiente de completar |
+| Fabrizzio Calliari |  |
+| Franco Germán Martínez Soria |  |
+| Gonzalo Ruiz |  |
+| Mateo Rusconi |  |
 
 ## Requisitos y desarrollo local
 
@@ -135,7 +135,7 @@ El formato paginado esperado es `{ pageSize, pageIndex, data, total }`, con `pag
 - `params` debe ser un objeto común. Se eliminan propiedades con `''`, `null` o `undefined`, pero se conservan `0` y `false`.
 - El interceptor de response transforma los errores en `ApiError`. Las cancelaciones conservan su identidad; no se muestran como fallos mediante `getErrorMessage`.
 - Un 401 del token de la sesión actual limpia esa sesión y emite `auth:expired`. Un 403 no cierra la sesión. Un 401 atrasado de otro token no borra una sesión nueva.
-- El interceptor no redirige. Falta integrar el listener de `auth:expired` en el futuro `AuthProvider`.
+- El interceptor no redirige: `AuthProvider` escucha `auth:expired`, pone la sesión en `null` y `ProtectedRoute` lleva al login.
 
 ### Login sin adjuntar una sesión anterior
 
@@ -180,9 +180,26 @@ Admin envía `{ email, password }`; paciente envía `{ email, dni }`, con DNI nu
 
 Los roles reconocidos son `ADMINISTRADOR` y `PACIENTE`. El DNI es opcional para admin. El token antiguo de `medportal.token` ya no se utiliza.
 
-Guardar la sesión no autentica por sí solo al usuario ni valida la firma o el vencimiento del JWT. La autorización real corresponde al backend. Tampoco actualiza automáticamente el estado de React: falta `AuthProvider` para coordinar almacenamiento, estado y navegación.
+Guardar la sesión no autentica por sí solo al usuario ni valida la firma o el vencimiento del JWT. La autorización real corresponde al backend.
 
 No guardar contraseñas ni registrar JWT en consola. localStorage persiste entre recargas y es accesible desde JavaScript del mismo origen; requiere cuidado frente a XSS. No usar `localStorage.clear()`, porque borraría información ajena a la sesión.
+
+### Usar la sesión en un componente: `useAuth()`
+
+`AuthProvider` (en `App.jsx`) guarda la sesión en estado y la comparte con todo el árbol. Al recargar la página la lee de localStorage, y si el token está vencido arranca sin sesión.
+
+```jsx
+import { useAuth } from '../../auth/hooks/useAuth';
+
+const { user, isAuthenticated, role, login, logout } = useAuth();
+user?.dni;   // DNI del paciente
+user?.email;
+```
+
+- `login({ token, role, email, dni })`: guarda la sesión. El back devuelve `{ token, role }`; el email y el DNI salen del formulario.
+- `logout()`: borra la sesión. A dónde navegar lo decide quien lo llama.
+- Si la API responde 401, la sesión se cierra sola.
+- Usar `useAuth()` fuera de `AuthProvider` tira un error.
 
 ## Errores y validaciones
 
@@ -305,7 +322,7 @@ Se realizaron comprobaciones locales puntuales de sesión, normalización de err
 
 Pendientes principales:
 
-- Conectar servicios de login, `AuthProvider`, `useAuth`, logout y rutas por rol.
+- Conectar servicios de login.
 - Completar los átomos, avisos, estados y componentes de listas compartidos.
 - Conectar el CRUD de especialidades y retirar los mocks/estadísticas de ejemplo cuando corresponda.
 - Implementar las pantallas provisorias del resto de módulos y realizar pruebas integrales.

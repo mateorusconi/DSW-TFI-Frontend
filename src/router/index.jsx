@@ -2,6 +2,8 @@ import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { PATHS } from './paths'
 
 import ProtectedRoute from '../modules/auth/components/ProtectedRoute'
+import GuestRoute from '../modules/auth/components/GuestRoute'
+
 import AdminLayout from '../modules/shared/components/templates/AdminLayout'
 import PatientLayout from '../modules/shared/components/templates/PatientLayout'
 
@@ -24,8 +26,14 @@ export const router = createBrowserRouter([
   { path: '/', element: <Navigate to={PATHS.patientLogin} replace /> },
 
   // Logins públicos: cada página compone el marco compartido AuthLayout.
-  { path: PATHS.patientLogin, element: <LoginPatientPage /> },
-  { path: PATHS.adminLogin, element: <LoginAdminPage /> },
+  // Logins públicos: GuestRoute manda a su inicio a quien ya está logueado.
+  {
+    element: <GuestRoute />,
+    children: [
+      { path: PATHS.patientLogin, element: <LoginPatientPage /> },
+      { path: PATHS.adminLogin, element: <LoginAdminPage /> },
+    ],
+  },
 
   // Administrador: ProtectedRoute → AdminLayout (sidebar) → página
   {
@@ -65,6 +73,8 @@ export const router = createBrowserRouter([
       },
     ],
   },
+
+  
 
   // Solo para desarrollo: muestra los componentes compartidos
   { path: PATHS.componentsDemo, element: <ComponentsDemoPage /> },

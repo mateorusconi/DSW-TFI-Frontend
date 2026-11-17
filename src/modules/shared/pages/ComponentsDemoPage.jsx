@@ -4,6 +4,7 @@ import Pagination from "../components/molecules/Pagination.jsx";
 import SearchBar from "../components/molecules/SearchBar.jsx";
 import { fetchDemoRows } from "../data/paginatedListDemo.js";
 import { usePaginatedList } from "../hooks/usePaginatedList.js";
+import { useAuth } from "../../auth/hooks/useAuth.js";
 
 const PAGE_SIZE = 10;
 
@@ -14,6 +15,7 @@ const COLUMNS = [
 
 function ComponentsDemoPage() {
   const [filters, setFilters] = useState({ name: "" });
+  const { isAuthenticated, user, role } = useAuth();
 
   const {
     items,
@@ -52,6 +54,10 @@ function ComponentsDemoPage() {
       <p className="mb-6 text-sm text-slate-600">
         Tabla, búsqueda y paginación mediante un custom hook.
         Los 25 registros son ficticios y no se consulta la API.
+      </p>
+
+      <p className="mb-6 rounded-md border border-slate-200 bg-white p-3 text-sm">
+        Sesión: {isAuthenticated ? `${user.email} (${role})` : "nadie logueado"}
       </p>
 
       <SearchBar
