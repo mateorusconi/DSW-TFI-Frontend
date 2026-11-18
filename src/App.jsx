@@ -1,9 +1,13 @@
 import { RouterProvider } from 'react-router-dom'
 import { router } from './router'
+import AuthProvider from './modules/auth/context/AuthProvider'
 
-// En SCRUM-23 se suma acá el <AuthProvider> envolviendo al RouterProvider.
 function App() {
-  return <RouterProvider router={router} />
+  return (
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  )
 }
 
 export default App
