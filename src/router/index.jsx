@@ -43,15 +43,15 @@ export const router = createBrowserRouter([
         element: <AdminLayout />,
         children: [
           { index: true, element: <AdminHomePage /> },
-          { path: 'especialidades', element: <SpecialtiesListPage /> },
-          { path: 'especialidades/nueva', element: <SpecialtyFormPage /> },
-          { path: 'especialidades/:id/editar', element: <SpecialtyFormPage /> },
-          { path: 'medicos', element: <DoctorsListPage /> },
-          { path: 'medicos/nuevo', element: <DoctorFormPage /> },
-          { path: 'medicos/:id/editar', element: <DoctorFormPage /> },
-          { path: 'medicos/disponibilidad', element: <DoctorAvailabilityPage /> },
-          { path: 'medicos/:id/disponibilidad', element: <DoctorAvailabilityPage /> },
-          { path: 'turnos', element: <AppointmentsSearchPage /> },
+          { path: 'specialties', element: <SpecialtiesListPage /> },
+          { path: 'specialties/new', element: <SpecialtyFormPage /> },
+          { path: 'specialties/:id/edit', element: <SpecialtyFormPage /> },
+          { path: 'doctors', element: <DoctorsListPage /> },
+          { path: 'doctors/new', element: <DoctorFormPage /> },
+          { path: 'doctors/:id/edit', element: <DoctorFormPage /> },
+          { path: 'doctors/availability', element: <DoctorAvailabilityPage /> },
+          { path: 'doctors/:id/availability', element: <DoctorAvailabilityPage /> },
+          { path: 'patients', element: <AppointmentsSearchPage /> },
         ],
       },
     ],
@@ -59,15 +59,15 @@ export const router = createBrowserRouter([
 
   // Paciente: ProtectedRoute → PatientLayout (navbar) → página
   {
-    path: '/paciente',
+        path: '/patient',
     element: <ProtectedRoute allowedRole="PACIENTE" />,
     children: [
       {
         element: <PatientLayout />,
         children: [
-          { index: true, element: <Navigate to="reservar" replace /> },
-          { path: 'reservar', element: <BookAppointmentPage /> },
-          { path: 'mis-turnos', element: <MyAppointmentsPage /> },
+          { index: true, element: <Navigate to="book" replace /> },
+          { path: 'book', element: <BookAppointmentPage /> },
+          { path: 'appointments', element: <MyAppointmentsPage /> },
         ],
       },
     ],
