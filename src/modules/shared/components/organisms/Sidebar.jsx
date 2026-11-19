@@ -13,7 +13,7 @@ import { PATHS } from '../../../../router/paths'
  * - Ítems e íconos según el mockup del TPI (v1.4).
  */
 const ITEMS = [
-    { to: PATHS.adminHome, icon: LayoutGrid, label: 'Tablero', end: true },
+    { to: PATHS.adminHome, icon: LayoutGrid, label: 'Panel', end: true },
     { to: PATHS.doctors, icon: BriefcaseMedical, label: 'Doctores' },
     { to: PATHS.specialties, icon: SquarePlus, label: 'Especialidades' },
     { to: PATHS.appointmentsSearch, icon: UserSearch, label: 'Búsqueda de Pacientes' },
