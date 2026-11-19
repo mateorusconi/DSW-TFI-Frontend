@@ -4,7 +4,7 @@ import Pagination from "../components/molecules/Pagination.jsx";
 import SearchBar from "../components/molecules/SearchBar.jsx";
 import { fetchDemoRows } from "../data/paginatedListDemo.js";
 import { usePaginatedList } from "../hooks/usePaginatedList.js";
-
+import AtomsDemo from "./AtomsDemo.jsx";
 const PAGE_SIZE = 10;
 
 const COLUMNS = [
@@ -53,7 +53,7 @@ function ComponentsDemoPage() {
         Tabla, búsqueda y paginación mediante un custom hook.
         Los 25 registros son ficticios y no se consulta la API.
       </p>
-
+      <AtomsDemo />
       <SearchBar
         placeholder="Buscar especialidad..."
         onSearch={handleSearch}
