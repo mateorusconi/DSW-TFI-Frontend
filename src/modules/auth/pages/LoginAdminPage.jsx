@@ -1,13 +1,18 @@
 import { ShieldPlus } from "lucide-react";
+import { Link } from "react-router-dom";
+import { PATHS } from "../../../router/paths.js";
+import { useAuth } from "../hooks/useAuth.js";
+import { loginAdmin } from "../services/authService.js";
 import AuthLayout from "../../shared/components/templates/AuthLayout.jsx";
 import LoginAdminForm from "../components/LoginAdminForm.jsx";
 import "./LoginPageStyle.css";
 
 function LoginAdminPage() {
-  function handleLogin(data) {
-    console.log("Formato válido. Todavía no se llamó al backend.", {
-      email: data.email,
-    });
+  const { login } = useAuth();
+
+  async function handleLogin({ email, password }) {
+    const { token, role } = await loginAdmin({ email, password });
+    login({ token, role, email });
   }
 
   return (
@@ -24,10 +29,14 @@ function LoginAdminPage() {
     >
       <h1 className="login-page__title">Bienvenido de nuevo</h1>
       <p className="login-page__help">
-        Porfavor,autentiquense para acceder al portal de proveedores.
+        Por favor, autenticáte para acceder al portal.
       </p>
 
       <LoginAdminForm onSubmit={handleLogin} />
+
+      <Link to={PATHS.patientLogin} className="login-page__support-link">
+        ¿Sos paciente? Ingresá acá
+      </Link>
 
       <div>
         <p className="login-page__support-text">
