@@ -1,12 +1,17 @@
+import { Link } from "react-router-dom";
+import { PATHS } from "../../../router/paths.js";
+import { useAuth } from "../hooks/useAuth.js";
+import { loginPatient } from "../services/authService.js";
 import AuthLayout from "../../shared/components/templates/AuthLayout.jsx";
 import LoginPatientForm from "../components/LoginPatientForm.jsx";
 import "./LoginPageStyle.css";
 
 function LoginPatientPage() {
-  function handleLogin(data) {
-    console.log("Formato válido. Todavía no se llamó al backend.", {
-      email: data.email,
-    });
+  const { login } = useAuth();
+
+  async function handleLogin({ email, dni }) {
+    const { token, role } = await loginPatient({ email, dni });
+    login({ token, role, email, dni: Number(dni) });
   }
 
   return (
@@ -18,6 +23,10 @@ function LoginPatientPage() {
       </p>
 
       <LoginPatientForm onSubmit={handleLogin} />
+
+      <Link to={PATHS.adminLogin} className="login-page__support-link">
+        ¿Sos administrador? Ingresá acá
+      </Link>
 
       <div>
         <p className="login-page__support-text">
