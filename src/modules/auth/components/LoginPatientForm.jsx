@@ -1,9 +1,9 @@
 import { useForm } from "react-hook-form";
+import Button from "../../shared/components/atoms/Button.jsx";
 import Input from "../../shared/components/atoms/Input.jsx";
 import { applyFieldErrors } from "../../shared/helpers/applyFieldErrors.js";
 import { getErrorMessage } from "../../shared/helpers/getErrorMessage.js";
 import { dniRules, emailRules } from "../validation/loginRules.js";
-import "./LoginFormStyle.css";
 
 function LoginPatientForm({ onSubmit }) {
   const {
@@ -33,7 +33,7 @@ function LoginPatientForm({ onSubmit }) {
 
   return (
     <form
-      className="login-form"
+      className="flex flex-col gap-4"
       onSubmit={handleSubmit(submit)}
       noValidate
     >
@@ -65,13 +65,9 @@ function LoginPatientForm({ onSubmit }) {
         </p>
       )}
 
-      <button
-        className="login-form__submit disabled:opacity-60"
-        type="submit"
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? "Ingresando..." : "Ingresar"}
-      </button>
+      <Button type="submit" loading={isSubmitting} className="min-h-11">
+        Ingresar
+      </Button>
     </form>
   );
 }
