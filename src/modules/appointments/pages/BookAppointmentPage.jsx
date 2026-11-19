@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { PATHS } from "../../../router/paths.js";
+import { useAuth } from "../../auth/hooks/useAuth.js";
 import Button from "../../shared/components/atoms/Button.jsx";
 import Select from "../../shared/components/atoms/Select.jsx";
 import Spinner from "../../shared/components/atoms/Spinner.jsx";
@@ -9,10 +12,26 @@ import { startOfWeek } from "../../shared/helpers/dates.js";
 import { getErrorMessage } from "../../shared/helpers/getErrorMessage.js";
 import { getDoctors } from "../../doctors/services/doctorsService.js";
 import { getSpecialties } from "../../specialties/services/specialtiesService.js";
+import BookingConfirmBar from "../components/BookingConfirmBar.jsx";
 import WeekSlotsGrid from "../components/WeekSlotsGrid.jsx";
 import { useDoctorSlots } from "../hooks/useDoctorSlots.js";
+import { createAppointment } from "../services/bookingService.js";
+
+// Errores después de los cuales el horario elegido ya no sirve y hay que recargar la grilla
+const SLOT_ERRORS = ["APPOINTMENT_CONFLICT", "APPOINTMENT_PAST_DATE"];
+
+function describeSlot(slot) {
+  const date = new Date(slot.date);
+  const weekday = date.toLocaleDateString("es-AR", { weekday: "long" });
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+
+  return `${weekday} ${day}/${month} a las ${slot.startTime}`;
+}
 
 function BookAppointmentPage() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [specialties, setSpecialties] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [specialtyId, setSpecialtyId] = useState("");
@@ -21,6 +40,7 @@ function BookAppointmentPage() {
   const [searchedDoctor, setSearchedDoctor] = useState(null);
   const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date()));
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const [notice, setNotice] = useState(null);
 
   const { slots, loading, error, reload } = useDoctorSlots(searchedDoctor?.id, weekStart);
 
@@ -70,6 +90,7 @@ function BookAppointmentPage() {
   }
 
   function handleSearch() {
+    setNotice(null);
     setSearchedDoctor(doctors.find((doctor) => doctor.id === doctorId) ?? null);
     setWeekStart(startOfWeek(new Date()));
     setSelectedSlot(null);
@@ -82,6 +103,42 @@ function BookAppointmentPage() {
       return next;
     });
     setSelectedSlot(null);
+  }
+
+  function selectSlot(slot) {
+    setNotice(null);
+    setSelectedSlot(slot);
+  }
+
+  async function handleConfirm(reason) {
+    setNotice(null);
+
+    try {
+      await createAppointment({
+        doctorId: searchedDoctor.id,
+        availabilityId: selectedSlot.id,
+        dni: user.dni,
+        reason,
+      });
+      setNotice({
+        type: "success",
+        text: `¡Turno confirmado para el ${describeSlot(selectedSlot)}!`,
+      });
+      setSelectedSlot(null);
+      reload();
+    } catch (error) {
+      // Los errores del motivo los muestra el formulario debajo del campo
+      if (error.errorCode === "VALIDATION_ERROR") {
+        throw error;
+      }
+
+      setNotice({ type: "error", text: getErrorMessage(error) });
+
+      if (SLOT_ERRORS.includes(error.errorCode)) {
+        setSelectedSlot(null);
+        reload();
+      }
+    }
   }
 
   const canGoPrev = weekStart > startOfWeek(new Date());
@@ -127,6 +184,20 @@ function BookAppointmentPage() {
             <p className="text-sm text-slate-600">{searchedDoctor.specialty?.name}</p>
           </div>
 
+          {notice && (
+            <Alert
+              variant={notice.type}
+              actionLabel={notice.type === "success" ? "Ver mis turnos" : undefined}
+              onAction={
+                notice.type === "success"
+                  ? () => navigate(PATHS.myAppointments)
+                  : undefined
+              }
+            >
+              {notice.text}
+            </Alert>
+          )}
+
           {error ? (
             <Alert variant="error" actionLabel="Reintentar" onAction={reload}>
               {error}
@@ -140,10 +211,20 @@ function BookAppointmentPage() {
               weekStart={weekStart}
               slots={slots}
               selectedSlotId={selectedSlot?.id}
-              onSelect={setSelectedSlot}
+              onSelect={selectSlot}
               onPrevWeek={() => moveWeek(-7)}
               onNextWeek={() => moveWeek(7)}
               canGoPrev={canGoPrev}
+            />
+          )}
+
+          {selectedSlot && (
+            <BookingConfirmBar
+              key={selectedSlot.id}
+              slot={selectedSlot}
+              doctor={searchedDoctor}
+              onConfirm={handleConfirm}
+              onCancel={() => setSelectedSlot(null)}
             />
           )}
         </>

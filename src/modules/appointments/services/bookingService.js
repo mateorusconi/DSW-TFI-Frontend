@@ -7,3 +7,14 @@ export async function getDoctorSlots(doctorId, from, to) {
 
   return data;
 }
+
+export async function createAppointment({ doctorId, availabilityId, dni, reason }) {
+  const { data } = await instance.post("/appointments", {
+    doctorId,
+    availabilityId,
+    patient: { dni: Number(dni) },
+    reason,
+  });
+
+  return data;
+}
