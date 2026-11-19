@@ -11,11 +11,8 @@ import SearchBar from "../../shared/components/molecules/SearchBar.jsx";
 import DataTable from "../../shared/components/organisms/DataTable.jsx";
 import { getErrorMessage } from "../../shared/helpers/getErrorMessage.js";
 import { usePaginatedList } from "../../shared/hooks/usePaginatedList.js";
-
-import DoctorActions from "../components/DoctorActions.jsx";
-import DoctorIdentity from "../components/DoctorIdentity.jsx";
 import { deleteDoctor, getDoctors } from "../services/doctorsService.js";
-
+import { getDoctorsColumns } from "../components/doctorsColumns.jsx";
 const PAGE_SIZE = 10;
 
 function DoctorsListPage() {
@@ -80,29 +77,7 @@ function DoctorsListPage() {
     reload();
   }
 
-  const columns = [
-    {
-      key: "name",
-      header: "Doctor",
-      render: (doctor) => <DoctorIdentity doctor={doctor} />,
-    },
-    {
-      key: "specialty",
-      header: "Especialidad",
-      render: (doctor) => (
-        <span className="inline-flex rounded-full bg-sky-50 px-3 py-1 text-xs font-medium text-sky-800">
-          {doctor.specialty?.name ?? "Sin especialidad"}
-        </span>
-      ),
-    },
-    {
-      key: "actions",
-      header: "Acciones",
-      render: (doctor) => (
-        <DoctorActions doctor={doctor} onDelete={openDeleteDialog} />
-      ),
-    },
-  ];
+   const columns = getDoctorsColumns(openDeleteDialog);
 
   return (
     <section>

@@ -64,49 +64,43 @@ Los módulos se organizan por funcionalidad (Screaming Architecture); los compon
 ```text
 src/
 ├─ main.jsx
-├─ App.jsx
-├─ index.css
+├─ App.jsx                → AuthProvider + RouterProvider
+├─ index.css              → Tailwind + @theme (tokens primary-*)
 ├─ router/
-│  ├─ index.jsx
-│  └─ paths.js
+│  ├─ index.jsx           → rutas, protegidas por rol
+│  └─ paths.js            → todas las URLs en un solo lugar
 └─ modules/
-   ├─ auth/                 # Login, validaciones y futura sesión global
-   ├─ specialties/          # Listado y formulario de especialidades
-   ├─ doctors/              # Páginas provisorias de médicos
-   ├─ availabilities/       # Página provisoria de disponibilidad
-   ├─ appointments/         # Páginas provisorias de turnos
-   ├─ home/                 # Panel provisorio del administrador
-   └─ shared/
-      ├─ api/
-      │  ├─ axiosInstance.js
-      │  └─ apiError.js
-      ├─ helpers/
-      │  ├─ tokenStorage.js
-      │  ├─ getErrorMessage.js
-      │  ├─ getValidationErrors.js
-      │  ├─ applyFieldErrors.js
-      │  └─ dates.js
-      ├─ hooks/             # Reservado para hooks compartidos
-      ├─ pages/
-      └─ components/
-         ├─ atoms/
-         ├─ molecules/
-         ├─ organisms/
-         └─ templates/
+   ├─ auth/               # Login de admin y paciente, sesión global (AuthProvider, useAuth) y rutas protegidas por rol
+   ├─ home/               # Tablero del administrador: resumen y turnos de hoy
+   ├─ specialties/        # Especialidades: listado con búsqueda y paginado, alta, edición y baja lógica
+   ├─ doctors/            # Médicos: listado con búsqueda y paginado, alta, edición y baja lógica
+   ├─ availabilities/     # Disponibilidad horaria semanal de cada médico
+   ├─ appointments/       # Turnos: búsqueda avanzada (admin), reserva y "Mis turnos" (paciente)
+   └─ shared/             # Lo que reutilizan todos los módulos
+      ├─ api/             → instancia de Axios e interceptores (único lugar con axios)
+      ├─ helpers/         → sesión, mensajes de error, fechas y estados de turno
+      ├─ hooks/           → usePaginatedList
+      ├─ constants/       → tamaño de página
+      ├─ pages/           → 404 y demo de componentes (solo en desarrollo)
+      └─ components/      → Atomic Design
+         ├─ atoms/        → Button, Input, Select, Textarea, Spinner, Card, StatusBadge
+         ├─ molecules/    → Alert, ConfirmDialog, PageHeader, Pagination, SearchBar, SidebarItem
+         ├─ organisms/    → DataTable, Sidebar, AdminHeader, PatientNavbar
+         └─ templates/    → AdminLayout, PatientLayout, AuthLayout
 ```
 
 ### Responsabilidades
 
 - **Página:** compone la pantalla y coordina sus acciones y navegación.
 - **Formulario:** muestra campos y validaciones; recibe el envío por props.
-- **Servicio de un módulo:** realiza solicitudes usando `instance` y devuelve los datos. Los servicios de negocio todavía están pendientes.
+- **Servicio de un módulo:** realiza solicitudes usando `instance` y devuelve los datos.
 - **Axios compartido:** configura transporte, token, filtros y normalización de errores. No dibuja mensajes ni decide qué página mostrar.
 - **Helpers:** transformaciones y utilidades reutilizables; no renderizan componentes.
 - **Layout:** define el marco visual. `AdminLayout` y `PatientLayout` usan `Outlet`; `AuthLayout` admite `children` o `Outlet`.
 
 Las páginas y componentes no deben llamar directamente a `axios` ni a `fetch`. Importan sus servicios. La dependencia directa de Axios queda en la capa compartida de transporte (`axiosInstance.js` y `apiError.js`). No importar componentes internos de otro módulo para reutilizar lógica.
 
-Actualmente conviven Tailwind y CSS de componentes. Los estilos comunes de login están unificados y sus variantes separadas. La migración completa a Tailwind/tokens aún está pendiente; este README describe lo existente, no la da por realizada.
+Los estilos se escriben con Tailwind y los tokens de `@theme` (`index.css`). Quedan por migrar los `.css` de los logins, `AuthLayout`, `Card`, `DataTable` y el listado de especialidades.  
 
 ## Cómo llamar al backend
 
