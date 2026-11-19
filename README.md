@@ -254,7 +254,22 @@ Trabajan con la zona local del dispositivo; `es-AR` no fija la zona de Argentina
 
 ## Componentes compartidos
 
-- **Átomos:** `Input` recibe `id`, `label`, `type`, `error` y props del input; admite las props de `register`. `Card` recibe `children` y `className`.
+- **Átomos** (`shared/components/atoms/`): todos reciben `id`, `label` y `error`, y pasan el resto de las props al elemento HTML, así que funcionan con `{...register("campo")}` de react-hook-form.
+  - `Input`: `type` y un `icon` opcional de lucide-react.
+  - `Select`: `options` (`[{ value, label }]`) y `placeholder` (por defecto "Seleccione...").
+  - `Textarea`: `maxLength` y `currentLength` para mostrar el contador `45/100`.
+  - `Button`: `variant` (`primary`, `secondary`, `danger`, `ghost`), `loading`, `icon` y `type` (por defecto `button`).
+  - `Spinner`: `size`. `Card`: `children` y `className`.
+
+```jsx
+<Input id="email" label="Email" type="email" icon={Mail}
+  error={errors.email?.message ?? ""}
+  {...register("email", { required: "El email es obligatorio." })} />
+
+<Button type="submit" icon={Save} loading={isSubmitting}>Guardar</Button>
+```
+
+La demo de todos los átomos está en `/componentes`.
 - **Moléculas:** `PageHeader`, `SidebarItem` y el `ConfirmDialog` actual.
 - **Organismos:** `DataTable`, `Sidebar`, `AdminHeader` y `PatientNavbar`.
 - **Templates:** `AdminLayout`, `PatientLayout` y `AuthLayout`.
