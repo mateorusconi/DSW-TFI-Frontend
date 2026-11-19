@@ -1,5 +1,4 @@
-import { useLocation } from 'react-router-dom'
-import { LayoutDashboard, Stethoscope, Activity, Clock, Search, LogOut } from 'lucide-react'
+import { LayoutGrid, BriefcaseMedical, SquarePlus, UserSearch, LogOut } from 'lucide-react'
 import SidebarItem from '../molecules/SidebarItem'
 import { PATHS } from '../../../../router/paths'
 
@@ -11,20 +10,16 @@ import { PATHS } from '../../../../router/paths'
  * - SOLID D: no sabe cómo se cierra la sesión; recibe `onLogout` del template.
  * - Hijo → padre: `onNavigate` avisa al layout que se eligió un ítem (para cerrar el menú en mobile).
  * - HTML semántico: <aside> + <nav>.
+ * - Ítems e íconos según el mockup del TPI (v1.4).
  */
+const ITEMS = [
+    { to: PATHS.adminHome, icon: LayoutGrid, label: 'Tablero', end: true },
+    { to: PATHS.doctors, icon: BriefcaseMedical, label: 'Doctores' },
+    { to: PATHS.specialties, icon: SquarePlus, label: 'Especialidades' },
+    { to: PATHS.appointmentsSearch, icon: UserSearch, label: 'Búsqueda de Pacientes' },
+]
+
 function Sidebar({ onLogout, onNavigate }) {
-    const { pathname } = useLocation()
-
-    // Disponibilidad cuelga de /admin/medicos: sin esto se resaltarían "Médicos" y "Disponibilidad" a la vez.
-    const isAvailability = pathname.endsWith('/disponibilidad')
-
-    const items = [
-        { to: PATHS.adminHome, icon: LayoutDashboard, label: 'Panel', end: true },
-        { to: PATHS.doctors, icon: Stethoscope, label: 'Médicos', active: pathname.startsWith(PATHS.doctors) && !isAvailability },
-        { to: PATHS.specialties, icon: Activity, label: 'Especialidades' },
-        { to: PATHS.availability, icon: Clock, label: 'Disponibilidad', active: isAvailability },
-        { to: PATHS.appointmentsSearch, icon: Search, label: 'Turnos' },
-    ]
 
     return (
         <aside className="flex h-full w-60 flex-col border-r border-slate-200 bg-white">
@@ -34,7 +29,7 @@ function Sidebar({ onLogout, onNavigate }) {
             </div>
 
             <nav aria-label="Menú principal" className="flex-1 space-y-1 overflow-y-auto px-3">
-                {items.map((item) => (
+                {ITEMS.map((item) => (
                     <SidebarItem key={item.to} {...item} onClick={onNavigate} />
                 ))}
             </nav>
