@@ -1,8 +1,10 @@
 import { useState } from "react";
+import StatusBadge from "../components/atoms/StatusBadge.jsx";
 import DataTable from "../components/organisms/DataTable.jsx";
 import Pagination from "../components/molecules/Pagination.jsx";
 import SearchBar from "../components/molecules/SearchBar.jsx";
 import { fetchDemoRows } from "../data/paginatedListDemo.js";
+import { APPOINTMENT_STATUS } from "../helpers/appointmentStatus.js";
 import { usePaginatedList } from "../hooks/usePaginatedList.js";
 import { useAuth } from "../../auth/hooks/useAuth.js";
 
@@ -59,6 +61,19 @@ function ComponentsDemoPage() {
       <p className="mb-6 rounded-md border border-slate-200 bg-white p-3 text-sm">
         Sesión: {isAuthenticated ? `${user.email} (${role})` : "nadie logueado"}
       </p>
+
+      <section aria-labelledby="appointment-status-demo" className="mb-6">
+        <h2 id="appointment-status-demo" className="mb-2 text-lg font-semibold">
+          Estados de turno
+        </h2>
+        <ul className="flex flex-wrap gap-2">
+          {Object.keys(APPOINTMENT_STATUS).map((status) => (
+            <li key={status}>
+              <StatusBadge status={status} />
+            </li>
+          ))}
+        </ul>
+      </section>
 
       <SearchBar
         placeholder="Buscar especialidad..."
