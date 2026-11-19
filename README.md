@@ -1,12 +1,6 @@
-# MedPortal — DSW TFI Frontend
+# MedPortal — Sistema de Turnos Médicos (Frontend)
 
-Frontend del sistema de turnos médicos, desarrollado con React y Vite.
-
-## Estado actual
-
-La base compartida de Axios, almacenamiento de sesión, errores y fechas está implementada. Los formularios de login validan localmente, pero todavía no llaman a la API. Especialidades usa datos de ejemplo: crear y editar no persisten cambios y la confirmación de eliminación está deshabilitada.
-
-`AuthProvider` comparte la sesión con toda la app y `ProtectedRoute` controla el acceso por rol.
+Frontend del Trabajo Práctico Integrador de **Desarrollo de Software 2026** (UTN — Facultad Regional Tucumán). Es una aplicación web en React que consume la API del backend [`dsw2026-tpi`](https://github.com/Franco704/dsw2026-tpi) y permite gestionar médicos, especialidades y disponibilidades horarias, y que los pacientes reserven y cancelen turnos de forma autónoma.
 
 ## Integrantes
 
@@ -17,325 +11,279 @@ La base compartida de Axios, almacenamiento de sesión, errores y fechas está i
 | Gonzalo Ruiz | 60467 |
 | Mateo Rusconi | 56559 |
 
-## Requisitos y desarrollo local
+## Funcionalidades
 
-- Node.js compatible con la versión instalada de Vite. Vite declara `^20.19.0 || >=22.12.0`; Node 24 cumple este requisito.
-- npm y un navegador moderno.
-- La API `dsw2026-tpi` solo es necesaria para probar solicitudes reales. Las pantallas actuales pueden abrirse sin iniciar el backend.
+El enunciado (v1.4) pide para el frontend: página de acceso según roles, gestión de médicos, especialidades y disponibilidades, y registro y cancelación de turnos. Todas están implementadas y conectadas a la API real.
 
-Desde la raíz de este repositorio, en PowerShell:
+| Funcionalidad | Rol | Requisito del enunciado |
+| --- | --- | --- |
+| Login del administrador (email y contraseña) | Administrador | RF01 |
+| Login del paciente (email y DNI); si es su primer ingreso, el backend lo registra solo | Paciente | RF02, RN06 |
+| Rutas protegidas por rol: cada usuario solo ve sus pantallas | Ambos | RN05 |
+| Panel principal: accesos rápidos y turnos del día | Administrador | — |
+| Médicos: listado con búsqueda y paginado, alta, edición y baja lógica | Administrador | RF03 |
+| Especialidades: listado con búsqueda y paginado, alta, edición y baja lógica | Administrador | RF04 |
+| Disponibilidad horaria: días y horarios de atención de cada médico, en bloques de 30 minutos | Administrador | RF05, CU02, RN02 |
+| Búsqueda avanzada de turnos por especialidad, médico, DNI y fecha | Administrador | RF09 |
+| Reserva de turno: especialidad → médico → grilla semanal de horarios libres → confirmación con motivo | Paciente | RF06, RF07, CU01 |
+| Mis turnos: turnos activos del paciente y cancelación | Paciente | RF08, CU03 |
 
-```powershell
-npm.cmd install
+Según la versión 1.4 del enunciado, la edición de médicos y de especialidades y el "Ver detalle" de la búsqueda avanzada no son obligatorios. Las dos ediciones se implementaron igual; el detalle de la búsqueda no.
 
-if (-not (Test-Path -LiteralPath .env)) {
-    Copy-Item -LiteralPath .env.example -Destination .env
-}
+## Tecnologías
 
-npm.cmd run dev
+| Librería | Para qué se usa |
+| --- | --- |
+| React 19 + Vite 8 | Interfaz y servidor de desarrollo con proxy hacia la API |
+| React Router 7 | Navegación, rutas anidadas por rol y redirecciones |
+| Axios | Llamadas a la API con interceptores para el token y el manejo de errores |
+| React Hook Form | Formularios y validaciones |
+| Tailwind CSS 4 | Estilos, diseño responsive (celular y computadora) |
+| lucide-react | Íconos |
+| ESLint | Reglas de calidad del código (`npm run lint`) |
+
+## Requisitos
+
+Para el frontend:
+
+- **Node.js** `20.19` o superior (o `22.12` o superior). Se probó con Node 24.
+- **npm** (viene con Node).
+
+Para el backend, que se necesita para usar la aplicación:
+
+- **.NET SDK 10**.
+- **SQL Server LocalDB** (viene con Visual Studio o con SQL Server Express). La cadena de conexión por defecto usa `(localdb)\MSSQLLocalDB`.
+- **Herramienta de Entity Framework** para crear la base de datos:
+
+  ```bash
+  dotnet tool install --global dotnet-ef
+  ```
+
+## Cómo correr el proyecto en local
+
+### 1. Backend
+
+```bash
+git clone https://github.com/Franco704/dsw2026-tpi.git
+cd dsw2026-tpi
+git checkout development
 ```
 
-Abrir la dirección indicada por Vite. Se usa `npm.cmd` para evitar el bloqueo de `npm.ps1` por la política de ejecución de PowerShell.
+**Contraseña del administrador inicial.** El backend crea el administrador la primera vez que arranca. El email está en `appsettings.json` (`admin@system.com`) y la contraseña se carga con *user-secrets*, para no subirla al repositorio. Tiene que tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo; si no, el backend no arranca:
 
-### Configuración de la API
+```bash
+dotnet user-secrets set "InitialAdmin:Password" "Admin2026!" --project Dsw2026Tpi.Api
+```
 
-El archivo `.env.example` contiene:
+**Base de datos.** El backend usa dos contextos de Entity Framework (el del dominio y el de usuarios). Hay que crear las tablas de los dos; el segundo comando también carga los roles `Administrador` y `Paciente`:
+
+```bash
+dotnet ef database update --project Dsw2026Tpi.Data --startup-project Dsw2026Tpi.Api --context Dsw2026TpiDbContext
+dotnet ef database update --project Dsw2026Tpi.Data --startup-project Dsw2026Tpi.Api --context AuthenticationDbContext
+```
+
+**Levantar la API:**
+
+```bash
+dotnet run --project Dsw2026Tpi.Api --launch-profile http
+```
+
+La API queda en `http://localhost:5278` y la documentación de los endpoints en `http://localhost:5278/swagger`. La primera vez que arranca crea el administrador inicial. Ya acepta pedidos desde `http://localhost:5173`, que es donde corre el frontend.
+
+### 2. Frontend
+
+En otra terminal:
+
+```bash
+git clone https://github.com/mateorusconi/DSW-TFI-Frontend.git
+cd DSW-TFI-Frontend
+npm install
+cp .env.example .env
+npm run dev
+```
+
+Abrir `http://localhost:5173`.
+
+En PowerShell de Windows, `cp` funciona igual; si la política de ejecución bloquea `npm`, usar `npm.cmd install` y `npm.cmd run dev`.
+
+El archivo `.env` define a dónde apunta el proxy de desarrollo:
 
 ```dotenv
 VITE_BACKEND_URL=http://localhost:5278
 ```
 
-`vite.config.js` lee esa variable y configura el proxy de desarrollo:
+El navegador pide `/api/...` al servidor de Vite y Vite lo reenvía a `VITE_BACKEND_URL/api/...`. Si el backend corre en otro puerto, cambiar esa variable y reiniciar `npm run dev`. `.env` no se sube al repositorio y no debe tener contraseñas ni claves.
 
-```text
-Navegador → /api/... → proxy de Vite → VITE_BACKEND_URL/api/...
-```
+### 3. Usuarios para probar
 
-La instancia de Axios usa `baseURL: '/api'`. Los servicios deben pedir `/specialties`, no `/api/specialties`, para no duplicar el prefijo. Reiniciar Vite después de cambiar `.env`.
+| Rol | Dónde entra | Datos |
+| --- | --- | --- |
+| Administrador | `http://localhost:5173/admin/login` | `admin@system.com` y la contraseña cargada con user-secrets |
+| Paciente | `http://localhost:5173/login` | Cualquier email y un DNI de 7 u 8 dígitos. Si no existe, se registra solo |
 
-`.env` está ignorado por Git; `.env.example` se comparte sin secretos. Las variables `VITE_*` no deben contener contraseñas, claves de firma ni otros secretos.
+Con la base vacía, para probar una reserva de punta a punta:
 
-El proxy está configurado para `npm.cmd run dev`, no para producción. Antes de desplegar hay que definir cómo el servidor resolverá `/api` y cómo devolverá `index.html` al abrir directamente una ruta de React Router. `npm.cmd run preview` tampoco configura por sí solo ese despliegue ni levanta el backend.
+1. Como administrador, crear una especialidad y un médico de esa especialidad.
+2. En **Doctores**, ícono del reloj, cargar su disponibilidad horaria (por ejemplo, lunes a viernes de 09:00 a 12:00).
+3. Como paciente, en **Reservar turno**, elegir la especialidad, el médico y un horario de la grilla, escribir el motivo y confirmar.
+4. En **Mis turnos** aparece el turno y se puede cancelar.
+
+## Pantallas y endpoints
+
+| Ruta | Pantalla | Rol | Endpoints que usa |
+| --- | --- | --- | --- |
+| `/login` | Login del paciente | Público | `POST /api/auth/patient/login` |
+| `/admin/login` | Login del administrador | Público | `POST /api/auth/admin/login` |
+| `/admin` | Panel principal | Administrador | `GET /api/appointments?date=` |
+| `/admin/doctors` | Listado de médicos | Administrador | `GET /api/doctors`, `DELETE /api/doctors/{id}` |
+| `/admin/doctors/new`, `/admin/doctors/:id/edit` | Alta y edición de médico | Administrador | `GET /api/specialties`, `POST /api/doctors`, `PUT /api/doctors/{id}` |
+| `/admin/doctors/availability`, `/admin/doctors/:id/availability` | Disponibilidad horaria | Administrador | `GET /api/doctors`, `GET /api/doctors/{id}/availabilities`, `POST` y `PUT /api/availabilities` |
+| `/admin/specialties` | Listado de especialidades | Administrador | `GET /api/specialties`, `DELETE /api/specialties/{id}` |
+| `/admin/specialties/new`, `/admin/specialties/:id/edit` | Alta y edición de especialidad | Administrador | `POST /api/specialties`, `PUT /api/specialties/{id}` |
+| `/admin/patients` | Búsqueda avanzada de turnos | Administrador | `GET /api/appointments/search`, `GET /api/specialties`, `GET /api/doctors` |
+| `/patient/book` | Reserva de turno | Paciente | `GET /api/specialties`, `GET /api/doctors?specialtyId=`, `GET /api/doctors/{id}/slots`, `POST /api/appointments` |
+| `/patient/appointments` | Mis turnos | Paciente | `GET /api/appointments/patient?dni=`, `DELETE /api/appointments/{id}` |
+
+`/` redirige al login del paciente. Cualquier otra ruta muestra la página 404. Los listados usan el formato paginado del backend: `{ pageSize, pageIndex, data, total }`, con `pageIndex` desde 1.
+
+## Reglas del negocio que se ven en la interfaz
+
+- **Acceso por rol:** sin sesión, cualquier pantalla privada redirige al login correspondiente; un paciente que intenta entrar al panel del administrador vuelve a su inicio, y viceversa. Después del login se vuelve a la pantalla que se quería ver.
+- **Sesión:** el token JWT dura 60 minutos. Si vence o el backend responde 401, la sesión se cierra sola y se vuelve al login.
+- **Disponibilidad:** el backend genera turnos de 30 minutos desde hoy hasta fin de mes, salteando feriados. Al modificar el horario se conservan los turnos ya reservados.
+- **Reserva:** no se ofrecen horarios pasados ni ocupados. Si otro paciente toma el mismo horario antes de confirmar, se avisa y la grilla se actualiza para elegir otro. El motivo es obligatorio (5 a 300 caracteres).
+- **Límites del backend:** 5 intentos de login de administrador, 10 de paciente y 5 reservas por minuto; al superarlos se muestra un aviso.
+- **Errores:** cada error de la API se muestra con un mensaje claro en castellano; los errores de validación aparecen debajo del campo correspondiente.
 
 ## Arquitectura
 
-Los módulos se organizan por funcionalidad (Screaming Architecture); los componentes compartidos se agrupan por nivel de composición (Atomic Design).
+Los módulos se organizan por funcionalidad (**Screaming Architecture**) y los componentes compartidos por nivel de composición (**Atomic Design**).
 
 ```text
 src/
 ├─ main.jsx
 ├─ App.jsx                → AuthProvider + RouterProvider
-├─ index.css              → Tailwind + @theme (tokens primary-*)
+├─ index.css              → Tailwind + @theme (colores primary-*)
 ├─ router/
 │  ├─ index.jsx           → rutas, protegidas por rol
 │  └─ paths.js            → todas las URLs en un solo lugar
 └─ modules/
-   ├─ auth/               # Login de admin y paciente, sesión global (AuthProvider, useAuth) y rutas protegidas por rol
-   ├─ home/               # Tablero del administrador: resumen y turnos de hoy
-   ├─ specialties/        # Especialidades: listado con búsqueda y paginado, alta, edición y baja lógica
-   ├─ doctors/            # Médicos: listado con búsqueda y paginado, alta, edición y baja lógica
-   ├─ availabilities/     # Disponibilidad horaria semanal de cada médico
-   ├─ appointments/       # Turnos: búsqueda avanzada (admin), reserva y "Mis turnos" (paciente)
+   ├─ auth/               # Logins, sesión global (AuthProvider, useAuth) y rutas protegidas por rol
+   ├─ home/               # Panel del administrador y turnos de hoy
+   ├─ specialties/        # Especialidades
+   ├─ doctors/            # Médicos
+   ├─ availabilities/     # Disponibilidad horaria de cada médico
+   ├─ appointments/       # Búsqueda avanzada (admin), reserva y "Mis turnos" (paciente)
    └─ shared/             # Lo que reutilizan todos los módulos
-      ├─ api/             → instancia de Axios e interceptores (único lugar con axios)
+      ├─ api/             → instancia de Axios e interceptores (único lugar que usa axios)
       ├─ helpers/         → sesión, mensajes de error, fechas y estados de turno
       ├─ hooks/           → usePaginatedList
       ├─ constants/       → tamaño de página
       ├─ pages/           → 404 y demo de componentes (solo en desarrollo)
-      └─ components/      → Atomic Design
+      └─ components/
          ├─ atoms/        → Button, Input, Select, Textarea, Spinner, Card, StatusBadge
          ├─ molecules/    → Alert, ConfirmDialog, PageHeader, Pagination, SearchBar, SidebarItem
          ├─ organisms/    → DataTable, Sidebar, AdminHeader, PatientNavbar
          └─ templates/    → AdminLayout, PatientLayout, AuthLayout
 ```
 
-### Responsabilidades
+Responsabilidades:
 
-- **Página:** compone la pantalla y coordina sus acciones y navegación.
-- **Formulario:** muestra campos y validaciones; recibe el envío por props.
-- **Servicio de un módulo:** realiza solicitudes usando `instance` y devuelve los datos.
-- **Axios compartido:** configura transporte, token, filtros y normalización de errores. No dibuja mensajes ni decide qué página mostrar.
-- **Helpers:** transformaciones y utilidades reutilizables; no renderizan componentes.
-- **Layout:** define el marco visual. `AdminLayout` y `PatientLayout` usan `Outlet`; `AuthLayout` admite `children` o `Outlet`.
+- **Página:** arma la pantalla y coordina las acciones y la navegación.
+- **Componente de un módulo** (por ejemplo, un formulario): muestra y valida; recibe las acciones por props y no llama a la API.
+- **Servicio de un módulo:** hace los pedidos con la instancia compartida de Axios y devuelve los datos.
+- **Capa compartida de API:** agrega el token, quita filtros vacíos y convierte los errores en `ApiError`. No muestra mensajes ni decide navegación.
+- **Helpers:** funciones reutilizables que no dibujan nada.
 
-Las páginas y componentes no deben llamar directamente a `axios` ni a `fetch`. Importan sus servicios. La dependencia directa de Axios queda en la capa compartida de transporte (`axiosInstance.js` y `apiError.js`). No importar componentes internos de otro módulo para reutilizar lógica.
+Las páginas y componentes no llaman directamente a `axios` ni a `fetch`: usan los servicios de su módulo. Un módulo puede usar el servicio de otro (por ejemplo, la reserva usa el de médicos), pero no sus componentes internos.
 
-Los estilos se escriben con Tailwind y los tokens de `@theme` (`index.css`). Quedan por migrar los `.css` de los logins, `AuthLayout`, `Card`, `DataTable` y el listado de especialidades.  
+### Sesión: `useAuth()`
 
-## Cómo llamar al backend
-
-### Servicio de negocio
-
-Ejemplo para el futuro archivo `src/modules/specialties/services/specialtiesService.js`. Este ejemplo documenta el patrón; ese servicio aún no está implementado en la aplicación.
-
-```js
-import { instance } from '../../shared/api/axiosInstance.js';
-
-export async function getSpecialties({ pageIndex = 1, pageSize = 10, name } = {}) {
-  const response = await instance.get('/specialties', {
-    params: { pageIndex, pageSize, name },
-  });
-
-  return response.data;
-}
-```
-
-El formato paginado esperado es `{ pageSize, pageIndex, data, total }`, con `pageIndex` desde 1. Las respuestas exitosas de Axios se mantienen intactas; el servicio extrae `response.data`. Si la solicitud falla, el error se propaga al `catch` del consumidor: no devolver silenciosamente una lista vacía ni ocultar el fallo.
-
-### Contrato de los interceptores
-
-- Base URL: `/api`. Tiempo máximo configurado: 10 segundos.
-- El interceptor de request consulta el token de la sesión en cada solicitud y agrega `Authorization: Bearer ...` cuando corresponde.
-- `params` debe ser un objeto común. Se eliminan propiedades con `''`, `null` o `undefined`, pero se conservan `0` y `false`.
-- El interceptor de response transforma los errores en `ApiError`. Las cancelaciones conservan su identidad; no se muestran como fallos mediante `getErrorMessage`.
-- Un 401 del token de la sesión actual limpia esa sesión y emite `auth:expired`. Un 403 no cierra la sesión. Un 401 atrasado de otro token no borra una sesión nueva.
-- El interceptor no redirige: `AuthProvider` escucha `auth:expired`, pone la sesión en `null` y `ProtectedRoute` lleva al login.
-
-### Login sin adjuntar una sesión anterior
-
-Los futuros servicios de login deben usar `skipAuth: true`. Es una opción propia de este proyecto, interpretada por el interceptor, no una opción de autenticación incorporada de Axios.
-
-Ejemplo de funciones para `src/modules/auth/services/authService.js` (todavía no conectadas a los formularios):
-
-```js
-import { instance } from '../../shared/api/axiosInstance.js';
-
-export async function loginAdmin(credentials) {
-  const { data } = await instance.post('/auth/admin/login', credentials, {
-    skipAuth: true,
-  });
-  return data;
-}
-
-export async function loginPatient({ email, dni }) {
-  const { data } = await instance.post(
-    '/auth/patient/login',
-    { email, dni: Number(dni) },
-    { skipAuth: true },
-  );
-  return data;
-}
-```
-
-Admin envía `{ email, password }`; paciente envía `{ email, dni }`, con DNI numérico y previamente validado. Ambos esperan `{ token, role }`. `skipAuth` elimina el header de autorización, de modo que un login rechazado no se trata como expiración de la sesión anterior.
-
-**Atención:** el primer login de un paciente puede crear registros en el backend. Acordar los datos de prueba antes de ejecutar solicitudes reales. Los ejemplos anteriores no deben confundirse con un login ya funcional.
-
-## Sesión
-
-`src/modules/shared/helpers/tokenStorage.js` expone:
-
-| Función | Responsabilidad |
-| --- | --- |
-| `saveSession({ token, role, email, dni })` | Guarda los campos permitidos como JSON en la clave `session` de localStorage. |
-| `getSession()` | Devuelve la sesión o `null` si falta, no tiene token/rol válidos o no puede leerse. |
-| `getToken()` | Extrae el token o devuelve `null`. |
-| `clearSession()` | Borra únicamente la clave `session`. |
-
-Los roles reconocidos son `ADMINISTRADOR` y `PACIENTE`. El DNI es opcional para admin. El token antiguo de `medportal.token` ya no se utiliza.
-
-Guardar la sesión no autentica por sí solo al usuario ni valida la firma o el vencimiento del JWT. La autorización real corresponde al backend.
-
-No guardar contraseñas ni registrar JWT en consola. localStorage persiste entre recargas y es accesible desde JavaScript del mismo origen; requiere cuidado frente a XSS. No usar `localStorage.clear()`, porque borraría información ajena a la sesión.
-
-### Usar la sesión en un componente: `useAuth()`
-
-`AuthProvider` (en `App.jsx`) guarda la sesión en estado y la comparte con todo el árbol. Al recargar la página la lee de localStorage, y si el token está vencido arranca sin sesión.
+`AuthProvider` guarda la sesión en estado y en `localStorage` (clave `session`), así sobrevive a una recarga. Si el token está vencido, arranca sin sesión.
 
 ```jsx
 import { useAuth } from '../../auth/hooks/useAuth';
 
 const { user, isAuthenticated, role, login, logout } = useAuth();
 user?.dni;   // DNI del paciente
-user?.email;
 ```
 
-- `login({ token, role, email, dni })`: guarda la sesión. El back devuelve `{ token, role }`; el email y el DNI salen del formulario.
-- `logout()`: borra la sesión. A dónde navegar lo decide quien lo llama.
-- Si la API responde 401, la sesión se cierra sola.
-- Usar `useAuth()` fuera de `AuthProvider` tira un error.
+- `login({ token, role, email, dni })`: guarda la sesión. El backend devuelve `{ token, role }`; el email y el DNI salen del formulario.
+- `logout()`: borra la sesión.
+- Los logins llaman a la API con `skipAuth: true` (opción propia del proyecto), para no mandar un token viejo.
 
-## Errores y validaciones
+### Errores
 
-`ApiError` contiene `status`, `errorCode`, `message` y `details`, con el formato de detalles `[{ field, issue }]`.
+Todos los errores de la API llegan como `ApiError` con `status`, `errorCode`, `message` y `details` (`[{ field, issue }]`), el formato que define el enunciado.
 
-- `toApiError(error)` normaliza errores de Axios y conserva los que ya son `ApiError`.
-- Sin respuesta HTTP, produce `status: 0` y `NETWORK_ERROR`; el 0 es una convención del frontend, no un código HTTP. Los timeouts sin respuesta también entran en este caso actualmente.
-- Si hay una respuesta no esperada, por ejemplo HTML de un proxy, conserva su estado HTTP y usa campos alternativos. No convierte un 502 recibido en un estado 0.
+- `getErrorMessage(error)` devuelve el mensaje para el usuario según el `errorCode` (por ejemplo, `APPOINTMENT_CONFLICT` → "Ese turno ya fue tomado. Elegí otro."), y si no, según el estado HTTP.
+- `applyFieldErrors(error, setError, campos)` pone los errores de validación del backend debajo de cada campo de React Hook Form.
+- Si no hay conexión con el servidor, el error es `NETWORK_ERROR` y se muestra "No se pudo conectar con el servidor."
 
-### Mensaje general
+### Componentes compartidos
 
-`getErrorMessage(error, fallback?)`, desde `shared/helpers/getErrorMessage.js`, devuelve un texto por código de error, luego por estado HTTP y finalmente el texto alternativo. Para estados desde 500 usa un mensaje genérico y no muestra detalles internos. Una cancelación devuelve `''`.
-
-### Errores por campo
-
-- `getValidationErrors(error)` solo extrae detalles de errores 400, descarta entradas incompletas y devuelve `{ campo: mensaje }`.
-- Normaliza la primera letra del campo: `Name` pasa a `name`; no convierte automáticamente todos los segmentos de una ruta anidada.
-- Traduce `required` a `Este campo es obligatorio.`. Otros valores de `issue` se conservan; no hay una traducción completa de códigos de validación todavía.
-- `applyFieldErrors(error, setError, allowedFields?)` usa ese resultado para llamar a `setError(field, { type: 'server', message })` de React Hook Form. Devuelve `true` si aplicó alguno.
-
-Ejemplo para un futuro `catch` del formulario de especialidades:
-
-```js
-const applied = applyFieldErrors(error, setError, ['name', 'description']);
-
-if (!applied) {
-  setErrorMessage(getErrorMessage(error));
-}
-```
-
-`setError` debe provenir de `useForm` y `setErrorMessage` del estado de la pantalla/formulario. Pasar `allowedFields` evita asignar errores a campos ajenos. Los conflictos 409, como un nombre repetido, requieren tratamiento específico si se quieren mostrar debajo de un campo: `applyFieldErrors` no los convierte automáticamente en validaciones 400.
-
-## Fechas y horas
-
-Las funciones de `src/modules/shared/helpers/dates.js` no llaman a la API ni modifican las reglas del backend.
-
-| Función | Resultado |
-| --- | --- |
-| `toLocalISODate(value)` | Fecha local `YYYY-MM-DD`; `''` si no puede interpretarla. |
-| `startOfWeek(value)` | Un nuevo `Date` para el lunes de esa semana a medianoche; `null` si no puede interpretarlo. No modifica el original. |
-| `formatLongDate(value)` | Texto en `es-AR`, por ejemplo `domingo, 1 de noviembre`; `—` si no puede interpretarlo. La puntuación puede variar según el entorno. |
-| `formatTime(value)` | Primeros cinco caracteres de una cadena que comienza con `HH:mm`; `—` si no tiene ese formato inicial. |
-
-Aceptan fechas `Date` o cadenas interpretables por JavaScript. Una cadena `YYYY-MM-DD` se trata como medianoche local para evitar el desplazamiento de UTC. Se recomienda usar fechas ISO, no cadenas ambiguas como `01/11/2026`.
-
-```js
-toLocalISODate(new Date(2026, 9, 21, 23, 30)); // '2026-10-21'
-formatTime('09:30:00'); // '09:30'
-```
-
-Trabajan con la zona local del dispositivo; `es-AR` no fija la zona de Argentina. Una cadena con `Z` o un offset representa un instante que se mostrará en la zona local. Son helpers de formato, no validadores estrictos de calendario ni de rangos horarios. Para filtros de fecha local no usar indiscriminadamente `toISOString().slice(0, 10)`.
-
-## Componentes compartidos
-
-- **Átomos** (`shared/components/atoms/`): todos reciben `id`, `label` y `error`, y pasan el resto de las props al elemento HTML, así que funcionan con `{...register("campo")}` de react-hook-form.
-  - `Input`: `type` y un `icon` opcional de lucide-react.
-  - `Select`: `options` (`[{ value, label }]`) y `placeholder` (por defecto "Seleccione...").
-  - `Textarea`: `maxLength` y `currentLength` para mostrar el contador `45/100`.
-  - `Button`: `variant` (`primary`, `secondary`, `danger`, `ghost`), `loading`, `icon` y `type` (por defecto `button`).
-  - `Spinner`: `size`. `Card`: `children` y `className`.
-
-```jsx
-<Input id="email" label="Email" type="email" icon={Mail}
-  error={errors.email?.message ?? ""}
-  {...register("email", { required: "El email es obligatorio." })} />
-
-<Button type="submit" icon={Save} loading={isSubmitting}>Guardar</Button>
-```
-
-La demo de todos los átomos está en `/componentes`.
-- **Moléculas:** `PageHeader`, `SidebarItem` y el `ConfirmDialog` actual.
-- **Organismos:** `DataTable`, `Sidebar`, `AdminHeader` y `PatientNavbar`.
+- **Átomos:** `Input`, `Select`, `Textarea` reciben `id`, `label` y `error`, y pasan el resto de las props al elemento HTML, así funcionan con `{...register("campo")}`. `Button` tiene las variantes `primary`, `secondary`, `danger` y `ghost`, y un estado `loading` que muestra un spinner y evita el doble click. `StatusBadge` muestra el estado de un turno.
+- **Moléculas:** `Alert` (avisos de éxito, error e información), `ConfirmDialog` (confirmaciones), `PageHeader`, `Pagination` y `SearchBar`.
+- **Organismos:** `DataTable` (tabla genérica con columnas configurables), `Sidebar`, `AdminHeader` y `PatientNavbar`.
 - **Templates:** `AdminLayout`, `PatientLayout` y `AuthLayout`.
 
-### DataTable
+Con `npm run dev`, la ruta `/componentes` muestra una demo de los componentes compartidos. No se incluye en el build de producción.
 
-Ejemplo dentro de un componente que haya importado `DataTable`:
+## Metodología de trabajo
 
-```jsx
-const columns = [
-  { key: 'name', header: 'Especialidad' },
-  { key: 'description', header: 'Descripción' },
-  { key: 'actions', header: 'Acciones', render: (row) => <span>{row.id}</span> },
-];
+### Organización con Jira
 
-const rows = [{ id: 'demo-1', name: 'Cardiología', description: 'Dato de ejemplo' }];
+El trabajo se organizó con **Scrum** sobre un tablero de Jira. El backlog se dividió en diez épicas:
 
-return <DataTable columns={columns} rows={rows} />;
-```
-
-Cada fila necesita un identificador estable (`id` por defecto, configurable con `rowKey`) y cada columna una `key` única. Sin `render`, se muestra `row[column.key]`; con `render(row)`, el módulo define el contenido de la celda. La tabla no conoce médicos ni especialidades y su contenedor permite desplazamiento horizontal.
-
-Las pantallas de listado combinan `DataTable` con `Pagination` y `usePaginatedList`. El tamaño de página por defecto es `DEFAULT_PAGE_SIZE` (10); una pantalla puede pasar un valor distinto. Mantené las columnas junto a la página si son cortas o en un archivo del propio módulo si tienen varios renderizados de celda.
-
-La demo `/componentes` usa datos ficticios y solo está disponible con `npm run dev`. No se incluye en el build de producción.
-
-### ConfirmDialog
-
-El diálogo actual se monta condicionalmente para abrirse y usa `dialog` nativo. Recibe `title`, `message`, `onCancel`, `onConfirm`, `confirmLabel` y `confirmDisabled`. Cancelar y Escape notifican `onCancel`; la confirmación queda deshabilitada si se indica o no hay `onConfirm`. Su integración con Button compartido, carga y el contrato final de SCRUM-26 está pendiente. `Alert` y `StatusBadge` todavía no están implementados.
-
-## Navegación y endpoints
-
-Las rutas se declaran en `src/router/index.jsx` y sus destinos reutilizables en `src/router/paths.js` (`PATHS`).
-
-| Ruta frontend | Estado |
+| Épica | Contenido |
 | --- | --- |
-| `/` | Redirige al login del paciente. |
-| `/paciente/login` y `/admin/login` | Formularios con validación local, sin login real. |
-| `/admin/especialidades` | Listado con datos de ejemplo y diálogo de eliminación. |
-| `/admin/especialidades/nueva` y `/admin/especialidades/:id/editar` | Formulario reutilizado; edición precargada desde mocks, sin persistencia. |
-| `/admin/turnos` | Búsqueda avanzada con filtros y paginación; pendiente de prueba con sesión admin y API real. |
-| Otras rutas de admin/paciente | Páginas provisorias según el router actual. |
+| E1 | Setup del proyecto y base técnica |
+| E2 | Autenticación por roles y rutas protegidas |
+| E3 | Layout y componentes compartidos |
+| E4 | Gestión de especialidades |
+| E5 | Gestión de médicos |
+| E6 | Disponibilidad horaria de médicos |
+| E7 | Panel principal y búsqueda avanzada de turnos |
+| E8 | Reserva y cancelación de turnos del paciente |
+| E9 | Calidad, errores, arquitectura y entrega |
+| E10 | Adaptaciones del backend que necesita el frontend |
 
-Endpoints previstos para integrar los flujos anteriores; no son llamadas ya realizadas por las pantallas:
+Cada historia o tarea (`SCRUM-<número>`) se escribió con la misma estructura: objetivo, conceptos que aplica, dónde estudiarlos, qué hay que hacer en concreto, entregable, cómo se verifica que está terminada y de qué otras tareas depende. El tablero usa los estados *Por hacer*, *En proceso*, *Bloqueado*, *Control de calidad* y *Hecho*.
 
-| Método | Endpoint | Uso |
-| --- | --- | --- |
-| POST | `/api/auth/admin/login` | Login con email y contraseña. |
-| POST | `/api/auth/patient/login` | Login con email y DNI. |
-| GET | `/api/specialties?pageIndex=1&pageSize=10&name=car` | Listado paginado y búsqueda. |
-| POST | `/api/specialties` | Crear con `{ name, description }`. |
-| PUT | `/api/specialties/{id}` | Editar con `{ name, description }`. |
-| DELETE | `/api/specialties/{id}` | Baja lógica. |
+Primero se resolvieron las **tareas base** (estructura del proyecto, router, capa de API, sesión, componentes compartidos y layouts), para que después cada pantalla se pudiera desarrollar en paralelo sin bloquear a nadie. Las tareas se asignaron y reasignaron según la disponibilidad del equipo y el avance de cada una.
 
-Los endpoints de especialidades requieren la autorización correspondiente del backend. No se presupone un `GET /api/specialties/{id}`: antes de conectar edición debe acordarse cómo recuperar la fila y qué hacer al abrir directamente su URL. El frontend no debe inferir autorización a partir de que una ruta sea accesible en este prototipo.
+### Flujo con Git y GitHub
 
-## Verificaciones y pendientes
+- `main`: versión de entrega.
+- `Development`: rama de integración, donde se juntan las tareas terminadas.
+- `feature/SCRUM-<número>-<descripción>`: una rama por tarea, creada desde `Development` actualizada.
 
-```powershell
-npm.cmd run lint
-npm.cmd run build
-npm.cmd run preview
-```
+Cada tarea se entrega con un **pull request a `Development`**. Antes de abrirlo se trae lo último de `Development`, se resuelven los conflictos y se corre `npm run lint`. Otro integrante revisa el PR antes de mergearlo. Al final, `Development` se mergea a `main` para la entrega.
 
-`build` genera `dist/` y `preview` permite inspeccionar ese resultado local. Ninguno inicia la API. El proyecto todavía no tiene un script `npm test` ni una suite de pruebas automatizadas persistente.
+### Coordinación con el backend
 
-Se realizaron comprobaciones locales puntuales de sesión, normalización de errores, helpers e interceptores con almacenamiento/adaptadores simulados. No sustituyen pruebas reales contra el backend ni constituyen una suite incluida en el repositorio. La integración HTTP completa aún debe verificarse con datos de prueba acordados, revisando Network, validaciones y permisos.
+El backend está en un repositorio aparte. Antes de empezar el frontend se relevó qué hacía falta cambiar en la API para cumplir con los mockups (por ejemplo, permitir que el paciente liste especialidades y médicos, exponer los horarios libres de cada médico y agregar fecha y nombres a las respuestas de turnos). Esos cambios se registraron como tareas de la épica E10 y el frontend se probó contra la rama `development` del backend.
 
-Pendientes principales:
+### Convenciones
 
-- Conectar servicios de login.
-- Completar los átomos, avisos, estados y componentes de listas compartidos.
-- Conectar el CRUD de especialidades y retirar los mocks/estadísticas de ejemplo cuando corresponda.
-- Implementar las pantallas provisorias del resto de módulos y realizar pruebas integrales.
-- Unificar la estrategia de estilos, completar los legajos y mantener este README actualizado al integrar cada tarea.
+- Screaming Architecture por módulos y Atomic Design para lo compartido.
+- Las páginas no llaman a la API directamente: usan servicios.
+- Estilos con Tailwind; textos de la interfaz en castellano.
+- Código sin errores de ESLint antes de cada PR.
+
+## Scripts
+
+| Comando | Qué hace |
+| --- | --- |
+| `npm run dev` | Servidor de desarrollo en `http://localhost:5173`, con proxy a la API |
+| `npm run lint` | Revisa el código con ESLint |
+| `npm run build` | Genera el build de producción en `dist/` |
+| `npm run preview` | Sirve el build localmente para revisarlo (no levanta la API ni configura el proxy) |
+
+## Limitaciones conocidas
+
+- **Disponibilidad:** la pantalla admite un rango horario por día. El backend genera turnos solo para el mes en curso, por lo que la disponibilidad del mes siguiente se carga a principio de ese mes.
+- **Búsqueda avanzada:** no incluye el "Ver detalle" de cada turno, que según el enunciado no es obligatorio.
+- **Estilos:** algunos componentes todavía usan archivos `.css` propios (`AuthLayout`, `Card`, `DataTable` y el listado de especialidades) en lugar de clases de Tailwind.
+- **Pruebas:** el frontend no tiene pruebas automatizadas; las funcionalidades se verificaron manualmente contra la API.
+- **Despliegue:** el proxy de `/api` es solo de desarrollo. Para publicar el build hay que configurar el servidor para que reenvíe `/api` al backend y devuelva `index.html` en las rutas de React Router.
