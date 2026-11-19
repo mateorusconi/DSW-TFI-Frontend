@@ -1,8 +1,9 @@
 import { instance } from "../../shared/api/axiosInstance.js";
+import { DEFAULT_PAGE_SIZE } from "../../shared/constants/pagination.js";
 
 export async function getSpecialties({
   pageIndex = 1,
-  pageSize = 10,
+  pageSize = DEFAULT_PAGE_SIZE,
   name = "",
 } = {}) {
   const response = await instance.get("/specialties", {
