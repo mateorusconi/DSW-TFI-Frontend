@@ -1,8 +1,15 @@
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import Button from "../../shared/components/atoms/Button.jsx";
 import Input from "../../shared/components/atoms/Input.jsx";
+import Textarea from "../../shared/components/atoms/Textarea.jsx";
+import Alert from "../../shared/components/molecules/Alert.jsx";
 import { applyFieldErrors } from "../../shared/helpers/applyFieldErrors.js";
 import { getErrorMessage } from "../../shared/helpers/getErrorMessage.js";
+import {
+  SPECIALTY_DESCRIPTION_RULES,
+  SPECIALTY_NAME_RULES,
+} from "../validation/specialtyFormRules.js";
 
 const EMPTY_VALUES = {
   name: "",
@@ -72,68 +79,22 @@ function SpecialtyForm({
         required
         readOnly={isSubmitting}
         error={errors.name?.message ?? ""}
-        {...register("name", {
-          setValueAs: (value) => value.trim(),
-          required: "El nombre es obligatorio.",
-          minLength: {
-            value: 3,
-            message: "El nombre debe tener al menos 3 caracteres.",
-          },
-          maxLength: {
-            value: 100,
-            message: "El nombre no puede superar los 100 caracteres.",
-          },
-        })}
+        {...register("name", SPECIALTY_NAME_RULES)}
       />
 
-      <div className="space-y-2">
-        <label htmlFor="specialty-description" className="block text-sm">
-          Descripción
-        </label>
-
-        <textarea
-          id="specialty-description"
-          rows={5}
-          className="block w-full resize-y p-3"
-          placeholder="Describí el alcance de la especialidad."
-          required
-          readOnly={isSubmitting}
-          aria-invalid={Boolean(errors.description)}
-          aria-describedby={
-            errors.description ? "specialty-description-error" : undefined
-          }
-          {...register("description", {
-            setValueAs: (value) => value.trim(),
-            required: "La descripción es obligatoria.",
-            minLength: {
-              value: 10,
-              message: "La descripción debe tener al menos 10 caracteres.",
-            },
-            maxLength: {
-              value: 100,
-              message: "La descripción no puede superar los 100 caracteres.",
-            },
-          })}
-        />
-
-        {errors.description && (
-          <p
-            id="specialty-description-error"
-            className="text-sm text-red-700"
-            role="alert"
-          >
-            {errors.description.message}
-          </p>
-        )}
-      </div>
+      <Textarea
+        id="specialty-description"
+        label="Descripción"
+        rows={5}
+        placeholder="Describí el alcance de la especialidad."
+        required
+        readOnly={isSubmitting}
+        error={errors.description?.message ?? ""}
+        {...register("description", SPECIALTY_DESCRIPTION_RULES)}
+      />
 
       {errors.root?.server && (
-        <p
-          role="alert"
-          className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800"
-        >
-          {errors.root.server.message}
-        </p>
+        <Alert variant="error">{errors.root.server.message}</Alert>
       )}
 
       <div className="flex justify-end gap-3 border-t border-slate-200 pt-5">
@@ -144,13 +105,9 @@ function SpecialtyForm({
           Cancelar
         </Link>
 
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="rounded-md bg-sky-900 px-4 py-2 text-sm text-white hover:bg-sky-800 disabled:cursor-not-allowed disabled:opacity-50"
-        >
+        <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Guardando..." : submitLabel}
-        </button>
+        </Button>
       </div>
     </form>
   );

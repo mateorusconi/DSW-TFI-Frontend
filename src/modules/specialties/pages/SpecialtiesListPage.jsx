@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { PATHS } from "../../../router/paths.js";
 
+import Alert from "../../shared/components/molecules/Alert.jsx";
 import ConfirmDialog from "../../shared/components/molecules/ConfirmDialog.jsx";
 import PageHeader from "../../shared/components/molecules/PageHeader.jsx";
 import Pagination from "../../shared/components/molecules/Pagination.jsx";
@@ -11,7 +12,7 @@ import { DEFAULT_PAGE_SIZE } from "../../shared/constants/pagination.js";
 import { getErrorMessage } from "../../shared/helpers/getErrorMessage.js";
 import { usePaginatedList } from "../../shared/hooks/usePaginatedList.js";
 
-import SpecialtyActions from "../components/SpecialtyActions.jsx";
+import { getSpecialtyListColumns } from "../components/specialtyListColumns.jsx";
 import {
   deleteSpecialty,
   getSpecialties,
@@ -85,23 +86,7 @@ function SpecialtiesListPage() {
     reload();
   }
 
-  const columns = [
-    {
-      key: "name",
-      header: "Nombre de la especialidad",
-    },
-    {
-      key: "description",
-      header: "Descripción",
-    },
-    {
-      key: "actions",
-      header: "Acciones",
-      render: (specialty) => (
-        <SpecialtyActions specialty={specialty} onDelete={openDeleteDialog} />
-      ),
-    },
-  ];
+  const columns = getSpecialtyListColumns(openDeleteDialog);
 
   return (
     <section className="specialties-page">
@@ -119,39 +104,21 @@ function SpecialtiesListPage() {
       />
 
       {successMessage && (
-        <div
-          role="status"
-          className="mb-4 flex items-center justify-between gap-3 rounded-md border border-green-200 bg-green-50 p-4 text-green-800"
+        <Alert
+          variant="success"
+          actionLabel="Cerrar"
+          onAction={dismissSuccessMessage}
         >
-          <p>{successMessage}</p>
-
-          <button
-            type="button"
-            onClick={dismissSuccessMessage}
-            className="rounded-md px-2 py-1 text-sm underline"
-          >
-            Cerrar
-          </button>
-        </div>
+          {successMessage}
+        </Alert>
       )}
 
       <SearchBar placeholder="Buscar especialidad..." onSearch={handleSearch} />
 
       {error ? (
-        <div
-          role="alert"
-          className="rounded-md border border-red-200 bg-red-50 p-4 text-red-800"
-        >
-          <p>{error}</p>
-
-          <button
-            type="button"
-            onClick={reload}
-            className="mt-3 rounded-md border border-red-300 px-3 py-2 text-sm"
-          >
-            Reintentar
-          </button>
-        </div>
+        <Alert variant="error" actionLabel="Reintentar" onAction={reload}>
+          {error}
+        </Alert>
       ) : (
         <DataTable columns={columns} rows={items} loading={loading} />
       )}

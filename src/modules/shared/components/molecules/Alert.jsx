@@ -1,3 +1,5 @@
+import Button from "../atoms/Button.jsx";
+
 // SOLID O: cada tipo de aviso se define acá; para sumar uno nuevo se agrega una entrada, sin tocar el componente
 const VARIANTS = {
   success: {
@@ -7,6 +9,10 @@ const VARIANTS = {
   error: {
     role: "alert",
     className: "border-red-200 bg-red-50 text-red-800",
+  },
+  warning: {
+    role: "alert",
+    className: "border-amber-200 bg-amber-50 text-amber-900",
   },
 };
 
@@ -21,13 +27,9 @@ function Alert({ variant = "error", children, actionLabel, onAction }) {
       <p>{children}</p>
 
       {onAction && (
-        <button
-          type="button"
-          onClick={onAction}
-          className="rounded-md border border-current px-3 py-1 text-sm hover:bg-white/60"
-        >
+        <Button variant="secondary" onClick={onAction}>
           {actionLabel}
-        </button>
+        </Button>
       )}
     </div>
   );

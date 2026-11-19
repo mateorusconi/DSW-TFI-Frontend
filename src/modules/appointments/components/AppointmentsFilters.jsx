@@ -1,4 +1,5 @@
 import { useForm, useWatch } from "react-hook-form";
+import Button from "../../shared/components/atoms/Button.jsx";
 import Input from "../../shared/components/atoms/Input.jsx";
 
 const EMPTY_FILTERS = { dni: "", specialtyId: "", doctorId: "", date: "" };
@@ -92,12 +93,12 @@ export default function AppointmentsFilters({
       </fieldset>
 
       <div className="flex flex-wrap items-center gap-3">
-        <button type="submit" className="rounded-md bg-sky-900 px-4 py-2 text-white">
+        <Button type="submit">
           Aplicar filtros
-        </button>
-        <button type="button" className="px-2 py-2 text-sky-900 underline" onClick={clearFilters}>
+        </Button>
+        <Button variant="ghost" onClick={clearFilters}>
           Limpiar
-        </button>
+        </Button>
       </div>
     </form>
   );
