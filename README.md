@@ -254,7 +254,22 @@ Trabajan con la zona local del dispositivo; `es-AR` no fija la zona de Argentina
 
 ## Componentes compartidos
 
-- **Átomos:** `Input` recibe `id`, `label`, `type`, `error` y props del input; admite las props de `register`. `Card` recibe `children` y `className`.
+- **Átomos** (`shared/components/atoms/`): todos reciben `id`, `label` y `error`, y pasan el resto de las props al elemento HTML, así que funcionan con `{...register("campo")}` de react-hook-form.
+  - `Input`: `type` y un `icon` opcional de lucide-react.
+  - `Select`: `options` (`[{ value, label }]`) y `placeholder` (por defecto "Seleccione...").
+  - `Textarea`: `maxLength` y `currentLength` para mostrar el contador `45/100`.
+  - `Button`: `variant` (`primary`, `secondary`, `danger`, `ghost`), `loading`, `icon` y `type` (por defecto `button`).
+  - `Spinner`: `size`. `Card`: `children` y `className`.
+
+```jsx
+<Input id="email" label="Email" type="email" icon={Mail}
+  error={errors.email?.message ?? ""}
+  {...register("email", { required: "El email es obligatorio." })} />
+
+<Button type="submit" icon={Save} loading={isSubmitting}>Guardar</Button>
+```
+
+La demo de todos los átomos está en `/componentes`.
 - **Moléculas:** `PageHeader`, `SidebarItem` y el `ConfirmDialog` actual.
 - **Organismos:** `DataTable`, `Sidebar`, `AdminHeader` y `PatientNavbar`.
 - **Templates:** `AdminLayout`, `PatientLayout` y `AuthLayout`.
@@ -275,9 +290,11 @@ const rows = [{ id: 'demo-1', name: 'Cardiología', description: 'Dato de ejempl
 return <DataTable columns={columns} rows={rows} />;
 ```
 
-Cada fila necesita un `id` estable y cada columna una `key` única. Sin `render`, se muestra `row[column.key]`; con `render(row)`, la página define el contenido de la celda. La tabla no conoce médicos ni especialidades y su contenedor permite desplazamiento horizontal.
+Cada fila necesita un identificador estable (`id` por defecto, configurable con `rowKey`) y cada columna una `key` única. Sin `render`, se muestra `row[column.key]`; con `render(row)`, el módulo define el contenido de la celda. La tabla no conoce médicos ni especialidades y su contenedor permite desplazamiento horizontal.
 
-La implementación actual aún no incluye `rowKey`, carga, mensaje vacío, `Pagination`, `SearchBar` ni `usePaginatedList`. Tampoco está terminada la demo de componentes; son parte del trabajo pendiente de SCRUM-25.
+Las pantallas de listado combinan `DataTable` con `Pagination` y `usePaginatedList`. El tamaño de página por defecto es `DEFAULT_PAGE_SIZE` (10); una pantalla puede pasar un valor distinto. Mantené las columnas junto a la página si son cortas o en un archivo del propio módulo si tienen varios renderizados de celda.
+
+La demo `/componentes` usa datos ficticios y solo está disponible con `npm run dev`. No se incluye en el build de producción.
 
 ### ConfirmDialog
 
@@ -293,7 +310,8 @@ Las rutas se declaran en `src/router/index.jsx` y sus destinos reutilizables en 
 | `/paciente/login` y `/admin/login` | Formularios con validación local, sin login real. |
 | `/admin/especialidades` | Listado con datos de ejemplo y diálogo de eliminación. |
 | `/admin/especialidades/nueva` y `/admin/especialidades/:id/editar` | Formulario reutilizado; edición precargada desde mocks, sin persistencia. |
-| Otras rutas de admin/paciente y `/componentes` | Páginas provisorias según el router actual. |
+| `/admin/turnos` | Búsqueda avanzada con filtros y paginación; pendiente de prueba con sesión admin y API real. |
+| Otras rutas de admin/paciente | Páginas provisorias según el router actual. |
 
 Endpoints previstos para integrar los flujos anteriores; no son llamadas ya realizadas por las pantallas:
 

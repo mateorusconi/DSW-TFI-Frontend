@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { DEFAULT_PAGE_SIZE } from "../constants/pagination.js";
 import { getErrorMessage } from "../helpers/getErrorMessage.js";
 
 const EMPTY_FILTERS = {};
@@ -6,7 +7,7 @@ const EMPTY_ITEMS = [];
 
 export function usePaginatedList(
   fetchFn,
-  { pageSize = 10, filters = EMPTY_FILTERS } = {},
+  { pageSize = DEFAULT_PAGE_SIZE, filters = EMPTY_FILTERS } = {},
 ) {
   const [request, setRequest] = useState({
     fetchFn,
