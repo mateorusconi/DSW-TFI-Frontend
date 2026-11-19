@@ -1,9 +1,23 @@
-import { Outlet } from 'react-router-dom'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
+import { homeFor } from '../helpers/homeFor'
+import { PATHS } from '../../../router/paths'
 
-// Provisorio (SCRUM-22): por ahora deja pasar a todos.
-// En SCRUM-24 se completa: redirige según la sesión y el rol (con useAuth).
-// eslint-disable-next-line no-unused-vars
 function ProtectedRoute({ allowedRole }) {
+  const { isAuthenticated, role } = useAuth()
+  const location = useLocation()
+
+  // Sin sesión → al login que corresponde, recordando a dónde quería ir
+  if (!isAuthenticated) {
+    const loginPath = allowedRole === 'ADMINISTRADOR' ? PATHS.adminLogin : PATHS.patientLogin
+    return <Navigate to={loginPath} replace state={{ from: location }} />
+  }
+
+  // Sesión de otro rol → a su propia pantalla de inicio
+  if (role !== allowedRole) {
+    return <Navigate to={homeFor(role)} replace />
+  }
+
   return <Outlet />
 }
 

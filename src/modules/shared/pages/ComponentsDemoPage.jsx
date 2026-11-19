@@ -5,6 +5,8 @@ import SearchBar from "../components/molecules/SearchBar.jsx";
 import { fetchDemoRows } from "../data/paginatedListDemo.js";
 import { usePaginatedList } from "../hooks/usePaginatedList.js";
 import AtomsDemo from "./AtomsDemo.jsx";
+import { useAuth } from "../../auth/hooks/useAuth.js";
+
 const PAGE_SIZE = 10;
 
 const COLUMNS = [
@@ -14,6 +16,7 @@ const COLUMNS = [
 
 function ComponentsDemoPage() {
   const [filters, setFilters] = useState({ name: "" });
+  const { isAuthenticated, user, role } = useAuth();
 
   const {
     items,
@@ -54,6 +57,11 @@ function ComponentsDemoPage() {
         Los 25 registros son ficticios y no se consulta la API.
       </p>
       <AtomsDemo />
+
+      <p className="mb-6 rounded-md border border-slate-200 bg-white p-3 text-sm">
+        Sesión: {isAuthenticated ? `${user.email} (${role})` : "nadie logueado"}
+      </p>
+
       <SearchBar
         placeholder="Buscar especialidad..."
         onSearch={handleSearch}
