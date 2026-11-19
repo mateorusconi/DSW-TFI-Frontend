@@ -2,6 +2,8 @@ import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { PATHS } from './paths'
 
 import ProtectedRoute from '../modules/auth/components/ProtectedRoute'
+import GuestRoute from '../modules/auth/components/GuestRoute'
+
 import AdminLayout from '../modules/shared/components/templates/AdminLayout'
 import PatientLayout from '../modules/shared/components/templates/PatientLayout'
 
@@ -16,7 +18,6 @@ import DoctorAvailabilityPage from '../modules/availabilities/pages/DoctorAvaila
 import AppointmentsSearchPage from '../modules/appointments/pages/AppointmentsSearchPage'
 import BookAppointmentPage from '../modules/appointments/pages/BookAppointmentPage'
 import MyAppointmentsPage from '../modules/appointments/pages/MyAppointmentsPage'
-import ComponentsDemoPage from '../modules/shared/pages/ComponentsDemoPage'
 import NotFoundPage from '../modules/shared/pages/NotFoundPage'
 
 // Cada integrante reemplaza SOLO su página; este archivo se toca únicamente para agregar una ruta nueva.
@@ -24,8 +25,14 @@ export const router = createBrowserRouter([
   { path: '/', element: <Navigate to={PATHS.patientLogin} replace /> },
 
   // Logins públicos: cada página compone el marco compartido AuthLayout.
-  { path: PATHS.patientLogin, element: <LoginPatientPage /> },
-  { path: PATHS.adminLogin, element: <LoginAdminPage /> },
+  // Logins públicos: GuestRoute manda a su inicio a quien ya está logueado.
+  {
+    element: <GuestRoute />,
+    children: [
+      { path: PATHS.patientLogin, element: <LoginPatientPage /> },
+      { path: PATHS.adminLogin, element: <LoginAdminPage /> },
+    ],
+  },
 
   // Administrador: ProtectedRoute → AdminLayout (sidebar) → página
   {
@@ -66,8 +73,16 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // Solo para desarrollo: muestra los componentes compartidos
-  { path: PATHS.componentsDemo, element: <ComponentsDemoPage /> },
+  // La demo no es una ruta de la aplicación en producción.
+  ...(import.meta.env.DEV
+    ? [{
+        path: '/componentes',
+        lazy: async () => {
+          const { default: Component } = await import('../modules/shared/pages/ComponentsDemoPage.jsx')
+          return { Component }
+        },
+      }]
+    : []),
 
   { path: '*', element: <NotFoundPage /> },
 ])

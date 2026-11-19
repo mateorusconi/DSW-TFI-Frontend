@@ -1,5 +1,7 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 import PatientNavbar from '../organisms/PatientNavbar'
+import { useAuth } from '../../../auth/hooks/useAuth'
+import { PATHS } from '../../../../router/paths'
 
 /**
  * Template: PatientLayout (marco de las pantallas del paciente)
@@ -10,13 +12,17 @@ import PatientNavbar from '../organisms/PatientNavbar'
  * - HTML semántico: <main> para el contenido.
  */
 function PatientLayout() {
-    // shortcut: email y logout fijos hasta SCRUM-23; ahí salen de useAuth()
-    const email = 'paciente@ejemplo.com'
-    const handleLogout = () => {}
+    const { user, logout } = useAuth()
+    const navigate = useNavigate()
+
+    const handleLogout = () => {
+        logout()
+        navigate(PATHS.patientLogin, { replace: true })
+    }
 
     return (
         <div className="min-h-screen bg-slate-50">
-            <PatientNavbar email={email} onLogout={handleLogout} />
+            <PatientNavbar email={user?.email} onLogout={handleLogout} />
             <main className="mx-auto max-w-5xl px-4 py-6">
                 <Outlet />
             </main>
