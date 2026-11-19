@@ -14,6 +14,10 @@ const VARIANTS = {
     role: "alert",
     className: "border-amber-200 bg-amber-50 text-amber-900",
   },
+  info: {
+    role: "note",
+    className: "border-sky-200 bg-sky-50 text-sky-900",
+  },
 };
 
 function Alert({ variant = "error", children, actionLabel, onAction }) {
