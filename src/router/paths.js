@@ -13,5 +13,4 @@ export const PATHS = {
   appointmentsSearch: '/admin/turnos',
   bookAppointment: '/paciente/reservar',
   myAppointments: '/paciente/mis-turnos',
-  componentsDemo: '/componentes',
 }

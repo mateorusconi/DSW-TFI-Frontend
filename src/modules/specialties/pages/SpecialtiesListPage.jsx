@@ -7,6 +7,7 @@ import PageHeader from "../../shared/components/molecules/PageHeader.jsx";
 import Pagination from "../../shared/components/molecules/Pagination.jsx";
 import SearchBar from "../../shared/components/molecules/SearchBar.jsx";
 import DataTable from "../../shared/components/organisms/DataTable.jsx";
+import { DEFAULT_PAGE_SIZE } from "../../shared/constants/pagination.js";
 import { getErrorMessage } from "../../shared/helpers/getErrorMessage.js";
 import { usePaginatedList } from "../../shared/hooks/usePaginatedList.js";
 
@@ -16,8 +17,6 @@ import {
   getSpecialties,
 } from "../services/specialtiesService.js";
 import "./SpecialtiesListPageStyle.css";
-
-const PAGE_SIZE = 10;
 
 function SpecialtiesListPage() {
   const location = useLocation();
@@ -32,7 +31,7 @@ function SpecialtiesListPage() {
 
   const { items, total, pageIndex, setPageIndex, loading, error, reload } =
     usePaginatedList(getSpecialties, {
-      pageSize: PAGE_SIZE,
+      pageSize: DEFAULT_PAGE_SIZE,
       filters,
     });
 
@@ -160,7 +159,7 @@ function SpecialtiesListPage() {
       {!loading && !error && (
         <Pagination
           pageIndex={pageIndex}
-          pageSize={PAGE_SIZE}
+          pageSize={DEFAULT_PAGE_SIZE}
           total={total}
           onPageChange={setPageIndex}
           itemLabel="especialidades"
