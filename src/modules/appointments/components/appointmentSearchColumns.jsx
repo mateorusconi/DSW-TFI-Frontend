@@ -1,15 +1,9 @@
+import StatusBadge from "../../shared/components/atoms/StatusBadge.jsx";
+
 const DATE_TIME_FORMAT = new Intl.DateTimeFormat("es-AR", {
   dateStyle: "medium",
   timeStyle: "short",
 });
-
-const STATUS_LABELS = {
-  BOOKED: "Reservado",
-  CANCELLED: "Cancelado",
-  ATTENDED: "Atendido",
-  NO_SHOW: "Ausente",
-  NOSHOW: "Ausente",
-};
 
 function formatScheduledAt(value) {
   if (!value) return "—";
@@ -46,7 +40,6 @@ export const appointmentSearchColumns = [
   {
     key: "appointmentsStatus",
     header: "Estado",
-    render: ({ appointmentsStatus }) =>
-      STATUS_LABELS[appointmentsStatus?.toUpperCase()] ?? appointmentsStatus ?? "—",
+    render: ({ appointmentsStatus }) => <StatusBadge status={appointmentsStatus} />,
   },
 ];
