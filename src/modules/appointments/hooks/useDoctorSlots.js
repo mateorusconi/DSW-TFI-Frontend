@@ -1,42 +1,43 @@
 import { useEffect, useState } from "react";
 import { getErrorMessage } from "../../shared/helpers/getErrorMessage.js";
 import { toLocalISODate } from "../../shared/helpers/dates.js";
+import { BOOKING_WEEK_DAYS, getBookingDay } from "../helpers/bookingWeek.js";
 import { getDoctorSlots } from "../services/bookingService.js";
 
-// Trae los horarios libres de un médico para la semana (lunes a viernes) que empieza en weekStart
+// Trae los bloques que informó la API para la semana del médico.
 export function useDoctorSlots(doctorId, weekStart) {
   const [attempt, setAttempt] = useState(0);
   const [result, setResult] = useState({ key: null, slots: [], error: "" });
 
   // Identifica el pedido actual: si cambia el médico, la semana o se reintenta, es otro pedido
-  const key = doctorId ? `${doctorId}|${toLocalISODate(weekStart)}|${attempt}` : null;
+  const from = toLocalISODate(weekStart);
+  const to = toLocalISODate(getBookingDay(weekStart, BOOKING_WEEK_DAYS - 1));
+  const key = doctorId ? `${doctorId}|${from}|${attempt}` : null;
 
   useEffect(() => {
     if (!doctorId) return;
 
-    let active = true;
-    const friday = new Date(weekStart);
-    friday.setDate(friday.getDate() + 4);
+    const controller = new AbortController();
 
-    getDoctorSlots(doctorId, toLocalISODate(weekStart), toLocalISODate(friday))
+    getDoctorSlots(doctorId, from, to, controller.signal)
       .then((slots) => {
-        if (active) setResult({ key, slots, error: "" });
+        if (!controller.signal.aborted) setResult({ key, slots, error: "" });
       })
       .catch((error) => {
-        if (active) setResult({ key, slots: [], error: getErrorMessage(error) });
+        if (!controller.signal.aborted) {
+          setResult({ key, slots: [], error: getErrorMessage(error) });
+        }
       });
 
-    return () => {
-      active = false;
-    };
-  }, [doctorId, weekStart, key]);
+    return () => controller.abort();
+  }, [doctorId, from, to, key]);
 
   const loading = key !== null && result.key !== key;
 
   return {
-    slots: loading ? [] : result.slots,
+    slots: key && !loading ? result.slots : [],
     loading,
-    error: loading ? "" : result.error,
+    error: key && !loading ? result.error : "",
     reload: () => setAttempt((current) => current + 1),
   };
 }

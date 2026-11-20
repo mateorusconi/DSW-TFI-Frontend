@@ -9,6 +9,7 @@ import DataTable from "../../shared/components/organisms/DataTable.jsx";
 import { DEFAULT_PAGE_SIZE } from "../../shared/constants/pagination.js";
 import { formatLongDate, toLocalISODate } from "../../shared/helpers/dates.js";
 import { usePaginatedList } from "../../shared/hooks/usePaginatedList.js";
+import DashboardStats from "../components/DashboardStats.jsx";
 import { todayAppointmentsColumns } from "../components/todayAppointmentsColumns.jsx";
 import { getAppointmentsByDate } from "../services/todayAppointmentsService.js";
 
@@ -41,6 +42,8 @@ function AdminHomePage() {
           </div>
         }
       />
+
+      <DashboardStats date={filters.date} />
 
       <section aria-labelledby="today-appointments-title">
         <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
