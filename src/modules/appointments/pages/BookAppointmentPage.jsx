@@ -8,7 +8,7 @@ import Select from "../../shared/components/atoms/Select.jsx";
 import Spinner from "../../shared/components/atoms/Spinner.jsx";
 import Alert from "../../shared/components/molecules/Alert.jsx";
 import PageHeader from "../../shared/components/molecules/PageHeader.jsx";
-import { startOfWeek } from "../../shared/helpers/dates.js";
+import { formatLongDate, startOfWeek } from "../../shared/helpers/dates.js";
 import { getErrorMessage } from "../../shared/helpers/getErrorMessage.js";
 import { getDoctors } from "../../doctors/services/doctorsService.js";
 import { getSpecialties } from "../../specialties/services/specialtiesService.js";
@@ -19,15 +19,6 @@ import { createAppointment } from "../services/bookingService.js";
 
 // Errores después de los cuales el horario elegido ya no sirve y hay que recargar la grilla
 const SLOT_ERRORS = ["APPOINTMENT_CONFLICT", "APPOINTMENT_PAST_DATE"];
-
-function describeSlot(slot) {
-  const date = new Date(slot.date);
-  const weekday = date.toLocaleDateString("es-AR", { weekday: "long" });
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-
-  return `${weekday} ${day}/${month} a las ${slot.startTime}`;
-}
 
 function BookAppointmentPage() {
   const { user } = useAuth();
@@ -94,6 +85,7 @@ function BookAppointmentPage() {
     setSearchedDoctor(doctors.find((doctor) => doctor.id === doctorId) ?? null);
     setWeekStart(startOfWeek(new Date()));
     setSelectedSlot(null);
+    reload();
   }
 
   function moveWeek(days) {
@@ -122,7 +114,7 @@ function BookAppointmentPage() {
       });
       setNotice({
         type: "success",
-        text: `¡Turno confirmado para el ${describeSlot(selectedSlot)}!`,
+        text: `¡Turno confirmado para el ${formatLongDate(selectedSlot.date)} a las ${selectedSlot.startTime}!`,
       });
       setSelectedSlot(null);
       reload();
