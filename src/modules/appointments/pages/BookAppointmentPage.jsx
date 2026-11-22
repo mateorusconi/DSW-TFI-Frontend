@@ -20,6 +20,15 @@ import { createAppointment } from "../services/bookingService.js";
 // Errores después de los cuales el horario elegido ya no sirve y hay que recargar la grilla
 const SLOT_ERRORS = ["APPOINTMENT_CONFLICT", "APPOINTMENT_PAST_DATE"];
 
+// Primera semana que se puede reservar: la actual, o la que viene si hoy es sábado o domingo
+// (la grilla muestra de lunes a viernes, así que el fin de semana la semana actual ya pasó)
+function firstBookableWeek() {
+  const today = new Date();
+  const monday = startOfWeek(today);
+  if (today.getDay() === 0 || today.getDay() === 6) monday.setDate(monday.getDate() + 7);
+  return monday;
+}
+
 function BookAppointmentPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -29,7 +38,7 @@ function BookAppointmentPage() {
   const [doctorId, setDoctorId] = useState("");
   const [optionsError, setOptionsError] = useState("");
   const [searchedDoctor, setSearchedDoctor] = useState(null);
-  const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date()));
+  const [weekStart, setWeekStart] = useState(firstBookableWeek);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [notice, setNotice] = useState(null);
 
@@ -83,7 +92,7 @@ function BookAppointmentPage() {
   function handleSearch() {
     setNotice(null);
     setSearchedDoctor(doctors.find((doctor) => doctor.id === doctorId) ?? null);
-    setWeekStart(startOfWeek(new Date()));
+    setWeekStart(firstBookableWeek());
     setSelectedSlot(null);
     reload();
   }
@@ -133,7 +142,7 @@ function BookAppointmentPage() {
     }
   }
 
-  const canGoPrev = weekStart > startOfWeek(new Date());
+  const canGoPrev = weekStart > firstBookableWeek();
 
   return (
     <section>

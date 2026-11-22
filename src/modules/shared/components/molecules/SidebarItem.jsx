@@ -16,9 +16,9 @@ function SidebarItem({ to, icon: Icon, label, onClick, end = false}) {
             end={end}
             onClick={onClick}
             className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${isActive
-                    ? 'bg-primary-50 text-primary-700 font-semibold'
-                    : 'font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                `flex items-center gap-3 rounded-l-lg border-r-4 px-3 py-2.5 text-sm transition-colors ${isActive
+                    ? 'border-primary-700 bg-primary-50 text-primary-700 font-semibold'
+                    : 'border-transparent font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                 }`
             }
         >
