@@ -2,7 +2,7 @@
 function getInitials(name) {
   return name
     .split(" ")
-    .filter(Boolean)
+    .filter((word) => word && !word.endsWith(".")) // se saltea "Dr." o "Dra."
     .slice(0, 2)
     .map((word) => word[0].toUpperCase())
     .join("");

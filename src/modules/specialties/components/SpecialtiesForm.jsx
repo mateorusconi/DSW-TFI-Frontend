@@ -1,7 +1,9 @@
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import Button from "../../shared/components/atoms/Button.jsx";
+import { Save } from "lucide-react";
 import Input from "../../shared/components/atoms/Input.jsx";
+import Select from "../../shared/components/atoms/Select.jsx";
 import Textarea from "../../shared/components/atoms/Textarea.jsx";
 import Alert from "../../shared/components/molecules/Alert.jsx";
 import { applyFieldErrors } from "../../shared/helpers/applyFieldErrors.js";
@@ -14,12 +16,19 @@ import {
 const EMPTY_VALUES = {
   name: "",
   description: "",
+  isActive: "true",
 };
+
+// El select maneja texto: la página convierte "true"/"false" a booleano antes de mandarlo al back
+const STATUS_OPTIONS = [
+  { value: "true", label: "Activo - Disponible para programación" },
+  { value: "false", label: "Inactivo - No disponible para programación" },
+];
 
 function SpecialtyForm({
   onSubmit,
   cancelTo,
-  submitLabel = "Guardar especialidad",
+  submitLabel = "Guardar Especialidad",
   initialValues = EMPTY_VALUES,
 }) {
   const {
@@ -74,8 +83,8 @@ function SpecialtyForm({
     >
       <Input
         id="specialty-name"
-        label="Nombre de la especialidad"
-        placeholder="Ej.: Cardiología"
+        label="Nombre de la Especialidad"
+        placeholder="Ej. Cardiología Intervencionista"
         required
         readOnly={isSubmitting}
         error={errors.name?.message ?? ""}
@@ -86,11 +95,20 @@ function SpecialtyForm({
         id="specialty-description"
         label="Descripción"
         rows={5}
-        placeholder="Describí el alcance de la especialidad."
+        placeholder="Detalle el alcance de la especialidad, procedimientos principales y requisitos de derivación..."
         required
         readOnly={isSubmitting}
         error={errors.description?.message ?? ""}
         {...register("description", SPECIALTY_DESCRIPTION_RULES)}
+      />
+
+      <Select
+        id="specialty-status"
+        label="Estado inicial"
+        placeholder={null}
+        options={STATUS_OPTIONS}
+        disabled={isSubmitting}
+        {...register("isActive")}
       />
 
       {errors.root?.server && (
@@ -105,7 +123,7 @@ function SpecialtyForm({
           Cancelar
         </Link>
 
-        <Button type="submit" disabled={isSubmitting}>
+        <Button type="submit" icon={Save} disabled={isSubmitting}>
           {isSubmitting ? "Guardando..." : submitLabel}
         </Button>
       </div>

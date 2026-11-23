@@ -1,4 +1,5 @@
-// Mismo contrato que el átomo Input (id, label, error) para que los formularios usen los dos igual
+// Mismo contrato que el átomo Input (id, label, error) para que los formularios usen los dos igual.
+// Con placeholder={null} no se agrega la opción vacía (para selects que siempre tienen un valor).
 function Select({
   id,
   label,
@@ -13,7 +14,7 @@ function Select({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={id}>{label}</label>
+      <label htmlFor={id} className="text-sm font-semibold text-slate-800">{label}</label>
 
       <select
         {...selectProps}
@@ -22,7 +23,7 @@ function Select({
         aria-describedby={hasError ? errorId : undefined}
         className={`min-h-10 w-full px-3 aria-invalid:border-red-600 ${className}`}
       >
-        <option value="">{placeholder}</option>
+        {placeholder !== null && <option value="">{placeholder}</option>}
 
         {options.map((option) => (
           <option key={option.value} value={option.value}>

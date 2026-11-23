@@ -1,4 +1,4 @@
-import { ShieldPlus } from "lucide-react";
+import { ArrowLeft, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { PATHS } from "../../../router/paths.js";
 import { useAuth } from "../hooks/useAuth.js";
@@ -16,33 +16,29 @@ function LoginAdminPage() {
 
   return (
     <AuthLayout
-      brand={
-        <div className="mb-6 flex flex-col items-center gap-px">
-          <div className="flex h-14 w-12 items-center justify-center rounded-lg bg-white text-[#001661]">
-            <ShieldPlus size={38} aria-hidden="true" />
-          </div>
-          <h2 className="text-2xl text-white">MedPortal</h2>
-        </div>
+      footer={
+        <p className="flex gap-3 text-sm leading-6 text-slate-600">
+          <ShieldCheck size={22} aria-hidden="true" className="mt-0.5 shrink-0 text-primary-600" />
+          <span>
+            <strong className="text-slate-800">Solo Acceso Seguro:</strong> Este sistema es para
+            personal médico autorizado. Los intentos de acceso no autorizados son registrados y
+            monitoreados para su cumplimiento.
+          </span>
+        </p>
+      }
+      below={
+        <Link to={PATHS.patientLogin} className="inline-flex items-center gap-1.5 hover:text-white hover:underline">
+          <ArrowLeft size={16} aria-hidden="true" />
+          Volver al Portal de Pacientes
+        </Link>
       }
     >
-      <h1 className="text-[1.2rem] font-semibold tracking-tight text-[#001661]">Bienvenido de nuevo</h1>
-      <p className="mb-2.5 text-sm text-slate-700">
-        Por favor, autenticáte para acceder al portal.
+      <h1 className="text-2xl font-bold tracking-tight text-primary-700">Bienvenido de nuevo</h1>
+      <p className="mt-2 mb-6 text-sm text-slate-600">
+        Por favor, autentíquese para acceder al portal.
       </p>
 
       <LoginAdminForm onSubmit={handleLogin} />
-
-      <Link to={PATHS.patientLogin} className="text-[0.8125rem] text-slate-800 hover:underline">
-        ¿Sos paciente? Ingresá acá
-      </Link>
-
-      <div>
-        <p className="text-[0.8125rem]">
-          <strong>🛡 Solo acceso seguro:</strong> Este sistema es para personal médico
-          autorizado. Los intentos de acceso no autorizados son registrados y
-          monitoreados para su cumplimiento.
-        </p>
-      </div>
     </AuthLayout>
   );
 }

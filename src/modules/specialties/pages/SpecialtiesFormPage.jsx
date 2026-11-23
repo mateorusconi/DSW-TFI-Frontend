@@ -41,19 +41,23 @@ function SpecialtyFormPage() {
   }
 
   const title = isEditing
-    ? "Editar especialidad"
-    : "Registrar nueva especialidad";
+    ? "Editar Especialidad"
+    : "Registrar Nueva Especialidad";
 
   const initialValues = {
     name: isEditing ? specialty.name : "",
     description: isEditing ? specialty.description : "",
+    // Al editar se precarga el estado actual; una especialidad nueva arranca activa
+    isActive: String(isEditing ? specialty.isActive !== false : true),
   };
 
   async function handleSave(data) {
+    const payload = { ...data, isActive: data.isActive === "true" };
+
     if (isEditing) {
-      await updateSpecialty(id, data);
+      await updateSpecialty(id, payload);
     } else {
-      await createSpecialty(data);
+      await createSpecialty(payload);
     }
 
     navigate(PATHS.specialties, {
@@ -70,10 +74,10 @@ function SpecialtyFormPage() {
     <section>
       <PageHeader
         title={title}
-        subtitle="Completá la información de la especialidad médica."
+        subtitle="Complete la información técnica y administrativa para dar de alta una especialidad médica en el sistema."
         breadcrumb={[
           { label: "Especialidades", to: PATHS.specialties },
-          { label: title },
+          { label: isEditing ? "Editar Especialidad" : "Agregar Nueva Especialidad" },
         ]}
       />
 
@@ -82,7 +86,7 @@ function SpecialtyFormPage() {
         initialValues={initialValues}
         onSubmit={handleSave}
         cancelTo={PATHS.specialties}
-        submitLabel={isEditing ? "Guardar cambios" : "Guardar especialidad"}
+        submitLabel={isEditing ? "Guardar cambios" : "Guardar Especialidad"}
       />
     </section>
   );
