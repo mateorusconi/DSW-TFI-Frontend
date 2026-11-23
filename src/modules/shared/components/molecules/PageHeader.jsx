@@ -40,7 +40,8 @@ function PageHeader({ title, subtitle, breadcrumb, actions }) {
                     </nav>
                 )}
 
-                <h1 className="text-2xl font-bold text-slate-900 md:text-3xl">{title}</h1>
+                {/* Sin title queda solo la miga (lo usa el alta de doctor, que lleva el título en la tarjeta) */}
+                {title && <h1 className="text-2xl font-bold text-slate-900 md:text-3xl">{title}</h1>}
                 {subtitle && <p className="mt-1 text-sm text-slate-500">{subtitle}</p>}
             </div>
 

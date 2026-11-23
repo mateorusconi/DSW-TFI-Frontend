@@ -1,3 +1,4 @@
+import { ArrowRight, Lock, Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
 import Button from "../../shared/components/atoms/Button.jsx";
 import Input from "../../shared/components/atoms/Input.jsx";
@@ -44,10 +45,11 @@ function LoginAdminForm({ onSubmit }) {
     >
       <Input
         id="admin-email"
-        label="Email"
+        label="Correo Electrónico"
         type="email"
+        icon={Mail}
         autoComplete="username"
-        placeholder="Nombre@correo.com"
+        placeholder="admin@medportal.com"
         required
         error={errors.email?.message ?? ""}
         {...register("email", emailRules)}
@@ -57,8 +59,10 @@ function LoginAdminForm({ onSubmit }) {
         id="admin-password"
         label="Contraseña"
         type="password"
+        icon={Lock}
+        revealable
         autoComplete="current-password"
-        placeholder="Contraseña"
+        placeholder="••••••••"
         required
         error={errors.password?.message ?? ""}
         {...register("password", passwordRules)}
@@ -70,8 +74,9 @@ function LoginAdminForm({ onSubmit }) {
         </p>
       )}
 
-      <Button type="submit" loading={isSubmitting} className="min-h-11">
-        Ingresar
+      <Button type="submit" loading={isSubmitting} className="min-h-12 text-base">
+        Iniciar Sesión
+        <ArrowRight size={18} aria-hidden="true" />
       </Button>
     </form>
   );

@@ -17,18 +17,20 @@ export async function getSpecialties({
   return response.data;
 }
 
-export async function createSpecialty({ name, description }) {
+export async function createSpecialty({ name, description, isActive }) {
   const response = await instance.post("/specialties", {
     name,
     description,
+    isActive,
   });
 
   return response.data;
 }
-export async function updateSpecialty(id, { name, description }) {
+export async function updateSpecialty(id, { name, description, isActive }) {
   const response = await instance.put(`/specialties/${id}`, {
     name,
     description,
+    isActive,
   });
 
   return response.data;

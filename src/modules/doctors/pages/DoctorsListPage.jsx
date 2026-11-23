@@ -5,15 +5,17 @@ import { PATHS } from "../../../router/paths.js";
 
 import Alert from "../../shared/components/molecules/Alert.jsx";
 import ConfirmDialog from "../../shared/components/molecules/ConfirmDialog.jsx";
+import HeaderSearch from "../../shared/components/molecules/HeaderSearch.jsx";
 import PageHeader from "../../shared/components/molecules/PageHeader.jsx";
-import Pagination from "../../shared/components/molecules/Pagination.jsx";
-import SearchBar from "../../shared/components/molecules/SearchBar.jsx";
-import DataTable from "../../shared/components/organisms/DataTable.jsx";
+import RecordsCard from "../../shared/components/organisms/RecordsCard.jsx";
 import { getErrorMessage } from "../../shared/helpers/getErrorMessage.js";
 import { usePaginatedList } from "../../shared/hooks/usePaginatedList.js";
 import { deleteDoctor, getDoctors } from "../services/doctorsService.js";
 import { getDoctorsColumns } from "../components/doctorsColumns.jsx";
 const PAGE_SIZE = 10;
+
+const darkButton =
+  "inline-flex min-h-10 items-center gap-2 rounded-md bg-primary-700 px-4 text-sm font-medium text-white hover:bg-primary-600";
 
 function DoctorsListPage() {
   const location = useLocation();
@@ -77,27 +79,28 @@ function DoctorsListPage() {
     reload();
   }
 
-   const columns = getDoctorsColumns(openDeleteDialog);
+  const columns = getDoctorsColumns(openDeleteDialog);
 
   return (
     <section>
+      {/* Encabezado como el mockup: buscador y los dos botones a la derecha del título */}
       <PageHeader
         title="Directorio de Doctores"
-        subtitle="Gestioná el personal médico del consultorio."
+        subtitle="Gestione el personal médico y supervise su disponibilidad actual."
         actions={
           <>
-            <Link
-              to={PATHS.availability}
-              className="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
-            >
+            <HeaderSearch
+              placeholder="Buscar doctor por nombre..."
+              label="Buscar doctor por nombre"
+              onSearch={handleSearch}
+            />
+
+            <Link to={PATHS.availability} className={darkButton}>
               <Clock size={18} aria-hidden="true" />
-              Disponibilidad Horaria
+              Agregar Disponibilidad Horaria
             </Link>
 
-            <Link
-              to={PATHS.doctorNew}
-              className="inline-flex items-center gap-2 rounded-md bg-sky-900 px-4 py-2 text-sm text-white hover:bg-sky-800"
-            >
+            <Link to={PATHS.doctorNew} className={darkButton}>
               <Plus size={18} aria-hidden="true" />
               Nuevo Doctor
             </Link>
@@ -115,25 +118,19 @@ function DoctorsListPage() {
         </Alert>
       )}
 
-      <SearchBar placeholder="Buscar doctor por nombre..." onSearch={handleSearch} />
-
-      {error ? (
-        <Alert variant="error" actionLabel="Reintentar" onAction={reload}>
-          {error}
-        </Alert>
-      ) : (
-        <DataTable columns={columns} rows={items} loading={loading} />
-      )}
-
-      {!loading && !error && (
-        <Pagination
-          pageIndex={pageIndex}
-          pageSize={PAGE_SIZE}
-          total={total}
-          onPageChange={setPageIndex}
-          itemLabel="doctores registrados"
-        />
-      )}
+      <RecordsCard
+        title="Registros de Doctores"
+        columns={columns}
+        rows={items}
+        loading={loading}
+        error={error}
+        onRetry={reload}
+        total={total}
+        pageIndex={pageIndex}
+        pageSize={PAGE_SIZE}
+        onPageChange={setPageIndex}
+        emptyMessage="No hay doctores registrados"
+      />
 
       {doctorToDelete !== null && (
         <ConfirmDialog

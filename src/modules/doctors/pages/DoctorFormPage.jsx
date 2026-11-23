@@ -95,10 +95,12 @@ function DoctorFormPage() {
 
   return (
     <section>
+      {/* Solo las migas: el título va dentro de la tarjeta del formulario, como en el mockup */}
       <PageHeader
-        title={title}
-        subtitle="Completá todos los campos obligatorios."
-        breadcrumb={[{ label: "Doctores", to: PATHS.doctors }, { label: title }]}
+        breadcrumb={[
+          { label: "Doctores", to: PATHS.doctors },
+          { label: isEditing ? "Editar Doctor" : "Agregar Nuevo Doctor" },
+        ]}
       />
 
       {optionsError ? (
@@ -108,6 +110,8 @@ function DoctorFormPage() {
       ) : (
         <DoctorForm
           key={id ?? "new"}
+          title={title}
+          subtitle="Complete todos los campos obligatorios para integrar al nuevo facultativo al sistema del centro médico."
           initialValues={initialValues}
           specialtyOptions={specialtyOptions}
           onSubmit={handleSave}

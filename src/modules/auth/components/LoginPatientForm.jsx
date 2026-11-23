@@ -1,3 +1,4 @@
+import { Lock, Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
 import Button from "../../shared/components/atoms/Button.jsx";
 import Input from "../../shared/components/atoms/Input.jsx";
@@ -39,10 +40,11 @@ function LoginPatientForm({ onSubmit }) {
     >
       <Input
         id="patient-email"
-        label="Email"
+        label="Correo Electrónico"
         type="email"
+        icon={Mail}
         autoComplete="email"
-        placeholder="Nombre@correo.com"
+        placeholder="paciente@medportal.com"
         required
         error={errors.email?.message ?? ""}
         {...register("email", emailRules)}
@@ -50,10 +52,13 @@ function LoginPatientForm({ onSubmit }) {
 
       <Input
         id="patient-dni"
-        label="DNI / Número de identificación"
-        type="text"
+        label="DNI"
+        type="password"
+        icon={Lock}
+        revealable
         inputMode="numeric"
-        placeholder="Número de documento"
+        autoComplete="off"
+        placeholder="••••••••"
         required
         error={errors.dni?.message ?? ""}
         {...register("dni", dniRules)}
@@ -65,8 +70,8 @@ function LoginPatientForm({ onSubmit }) {
         </p>
       )}
 
-      <Button type="submit" loading={isSubmitting} className="min-h-11">
-        Ingresar
+      <Button type="submit" loading={isSubmitting} className="min-h-12 text-base">
+        Ingresar Paciente
       </Button>
     </form>
   );

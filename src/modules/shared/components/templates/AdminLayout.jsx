@@ -20,7 +20,7 @@ function AdminLayout() {
     const [menuOpen, setMenuOpen] = useState(false)
 
     const closeMenu = () => setMenuOpen(false)
-    const { logout } = useAuth()
+    const { user, logout } = useAuth()
 const navigate = useNavigate()
 const handleLogout = () => {
     logout()
@@ -43,7 +43,7 @@ const handleLogout = () => {
                     menuOpen ? 'translate-x-0' : '-translate-x-full'
                 }`}
             >
-                <Sidebar onLogout={handleLogout} onNavigate={closeMenu} />
+                <Sidebar email={user?.email} onLogout={handleLogout} onNavigate={closeMenu} />
             </div>
 
             <div className="flex min-w-0 flex-1 flex-col">

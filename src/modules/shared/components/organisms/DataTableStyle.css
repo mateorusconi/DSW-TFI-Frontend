@@ -37,7 +37,7 @@
   padding: 18px 20px;
   border-bottom: 1px solid #e8eef5;
   line-height: 1.6;
-  vertical-align: top;
+  vertical-align: middle;
   color: #334155;
 }
 
@@ -77,6 +77,10 @@
 .table-actions a:hover {
   background-color: #e8f1fb;
   color: #075985;
+}
+
+.table-actions .table-actions__delete {
+  color: #dc2626;
 }
 
 .table-actions .table-actions__delete:hover {

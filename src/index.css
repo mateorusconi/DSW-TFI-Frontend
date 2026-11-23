@@ -4,6 +4,8 @@
   --color-primary-50: #f0f9ff;
   --color-primary-600: #075985;
   --color-primary-700: #0c4a6e;
+  /* Fondo azul oscuro de las pantallas de login (mockup v1.4) */
+  --color-primary-900: #0a2540;
 }
 
 @layer base {

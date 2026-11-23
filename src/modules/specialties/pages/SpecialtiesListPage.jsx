@@ -1,13 +1,13 @@
 import { useState } from "react";
+import { Plus } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { PATHS } from "../../../router/paths.js";
 
 import Alert from "../../shared/components/molecules/Alert.jsx";
 import ConfirmDialog from "../../shared/components/molecules/ConfirmDialog.jsx";
+import HeaderSearch from "../../shared/components/molecules/HeaderSearch.jsx";
 import PageHeader from "../../shared/components/molecules/PageHeader.jsx";
-import Pagination from "../../shared/components/molecules/Pagination.jsx";
-import SearchBar from "../../shared/components/molecules/SearchBar.jsx";
-import DataTable from "../../shared/components/organisms/DataTable.jsx";
+import RecordsCard from "../../shared/components/organisms/RecordsCard.jsx";
 import { DEFAULT_PAGE_SIZE } from "../../shared/constants/pagination.js";
 import { getErrorMessage } from "../../shared/helpers/getErrorMessage.js";
 import { usePaginatedList } from "../../shared/hooks/usePaginatedList.js";
@@ -17,7 +17,6 @@ import {
   deleteSpecialty,
   getSpecialties,
 } from "../services/specialtiesService.js";
-import "./SpecialtiesListPageStyle.css";
 
 function SpecialtiesListPage() {
   const location = useLocation();
@@ -89,17 +88,26 @@ function SpecialtiesListPage() {
   const columns = getSpecialtyListColumns(openDeleteDialog);
 
   return (
-    <section className="specialties-page">
+    <section>
       <PageHeader
         title="Directorio de Especialidades"
-        subtitle="Administrá las especialidades médicas del consultorio."
+        subtitle="Administre las categorías médicas, servicios y disponibilidad del personal especializado."
         actions={
-          <Link
-            to={PATHS.specialtyNew}
-            className="inline-flex rounded-md bg-sky-900 px-4 py-2 text-sm text-white hover:bg-sky-800"
-          >
-            Nueva especialidad
-          </Link>
+          <>
+            <HeaderSearch
+              placeholder="Buscar especialidad..."
+              label="Buscar especialidad"
+              onSearch={handleSearch}
+            />
+
+            <Link
+              to={PATHS.specialtyNew}
+              className="inline-flex min-h-10 items-center gap-2 rounded-md bg-primary-700 px-4 text-sm font-medium text-white hover:bg-primary-600"
+            >
+              <Plus size={18} aria-hidden="true" />
+              Nueva Especialidad
+            </Link>
+          </>
         }
       />
 
@@ -113,25 +121,19 @@ function SpecialtiesListPage() {
         </Alert>
       )}
 
-      <SearchBar placeholder="Buscar especialidad..." onSearch={handleSearch} />
-
-      {error ? (
-        <Alert variant="error" actionLabel="Reintentar" onAction={reload}>
-          {error}
-        </Alert>
-      ) : (
-        <DataTable columns={columns} rows={items} loading={loading} />
-      )}
-
-      {!loading && !error && (
-        <Pagination
-          pageIndex={pageIndex}
-          pageSize={DEFAULT_PAGE_SIZE}
-          total={total}
-          onPageChange={setPageIndex}
-          itemLabel="especialidades"
-        />
-      )}
+      <RecordsCard
+        title="Registros de Especialidades"
+        columns={columns}
+        rows={items}
+        loading={loading}
+        error={error}
+        onRetry={reload}
+        total={total}
+        pageIndex={pageIndex}
+        pageSize={DEFAULT_PAGE_SIZE}
+        onPageChange={setPageIndex}
+        emptyMessage="No hay especialidades registradas"
+      />
 
       {specialtyToDelete !== null && (
         <ConfirmDialog

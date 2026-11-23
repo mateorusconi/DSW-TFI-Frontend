@@ -1,19 +1,20 @@
-import { CalendarCheck, LayoutGrid, Stethoscope } from "lucide-react";
+import { BriefcaseMedical, CalendarDays, LayoutGrid } from "lucide-react";
 import { useEffect, useState } from "react";
 import Spinner from "../../shared/components/atoms/Spinner.jsx";
 import Alert from "../../shared/components/molecules/Alert.jsx";
 import { getErrorMessage } from "../../shared/helpers/getErrorMessage.js";
 import { getDashboardStats } from "../services/dashboardStatsService.js";
 
-const STATS_ENABLED = import.meta.env.VITE_DASHBOARD_STATS_ENABLED === "true";
 const numberFormat = new Intl.NumberFormat("es-AR");
+// Mismos íconos y etiquetas que las tarjetas del mockup; solo la de turnos lleva la etiqueta "Hoy"
 const STATS = [
-  { key: "activeDoctors", label: "Doctores activos", icon: Stethoscope },
+  { key: "activeDoctors", label: "Doctores activos", icon: BriefcaseMedical },
   { key: "activeSpecialties", label: "Especialidades activas", icon: LayoutGrid },
   {
     key: "confirmedAppointmentsToday",
     label: "Turnos confirmados para hoy",
-    icon: CalendarCheck,
+    icon: CalendarDays,
+    tag: "Hoy",
   },
 ];
 
@@ -23,8 +24,6 @@ function DashboardStats({ date }) {
   const requestKey = `${date}|${attempt}`;
 
   useEffect(() => {
-    if (!STATS_ENABLED) return;
-
     const controller = new AbortController();
 
     getDashboardStats(date, controller.signal)
@@ -44,23 +43,30 @@ function DashboardStats({ date }) {
   }, [date, requestKey]);
 
   const currentResult = result?.requestKey === requestKey ? result : null;
-  const loading = STATS_ENABLED && currentResult === null;
+  const loading = currentResult === null;
 
   return (
-    <section className="mb-6" aria-label="Indicadores del tablero">
-      <dl className="grid gap-3 sm:grid-cols-3" aria-busy={loading}>
-        {STATS.map(({ key, label, icon: Icon }) => {
+    <section className="mb-8" aria-label="Indicadores del tablero">
+      <dl className="grid gap-5 sm:grid-cols-3" aria-busy={loading}>
+        {STATS.map(({ key, label, icon: Icon, tag }) => {
           const value = currentResult?.stats?.[key];
 
           return (
-            <div key={key} className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-              <span className="mb-3 inline-flex rounded-lg bg-sky-50 p-2 text-sky-900">
-                <Icon size={19} aria-hidden="true" />
-              </span>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-slate-600">
+            <div key={key} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+              <div className="mb-6 flex items-start justify-between">
+                <span className="inline-flex rounded-lg bg-primary-50 p-2.5 text-primary-700">
+                  <Icon size={22} aria-hidden="true" />
+                </span>
+                {tag && (
+                  <span className="rounded-full bg-primary-50 px-2.5 py-0.5 text-xs font-semibold text-primary-700">
+                    {tag}
+                  </span>
+                )}
+              </div>
+              <dt className="text-xs font-semibold uppercase tracking-wider text-slate-600">
                 {label}
               </dt>
-              <dd className="mt-1 min-h-8 text-2xl font-bold tabular-nums text-sky-900">
+              <dd className="mt-1 min-h-10 text-4xl font-bold tabular-nums text-primary-700">
                 {loading ? (
                   <Spinner />
                 ) : value === undefined ? (
@@ -77,11 +83,6 @@ function DashboardStats({ date }) {
         })}
       </dl>
 
-      {!STATS_ENABLED && (
-        <p className="mt-2 text-sm text-slate-600">
-          Los indicadores se mostrarán cuando se habilite el servicio de estadísticas.
-        </p>
-      )}
       {currentResult?.error && (
         <div className="mt-3">
           <Alert
