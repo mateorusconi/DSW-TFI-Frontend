@@ -1,0 +1,42 @@
+import { instance } from "../../shared/api/axiosInstance.js";
+import { DEFAULT_PAGE_SIZE } from "../../shared/constants/pagination.js";
+
+export async function getSpecialties({
+  pageIndex = 1,
+  pageSize = DEFAULT_PAGE_SIZE,
+  name = "",
+} = {}) {
+  const response = await instance.get("/specialties", {
+    params: {
+      pageIndex,
+      pageSize,
+      name,
+    },
+  });
+
+  return response.data;
+}
+
+export async function createSpecialty({ name, description, isActive }) {
+  const response = await instance.post("/specialties", {
+    name,
+    description,
+    isActive,
+  });
+
+  return response.data;
+}
+export async function updateSpecialty(id, { name, description, isActive }) {
+  const response = await instance.put(`/specialties/${id}`, {
+    name,
+    description,
+    isActive,
+  });
+
+  return response.data;
+}
+export async function deleteSpecialty(id) {
+  const response = await instance.delete(`/specialties/${id}`);
+
+  return response.data;
+}

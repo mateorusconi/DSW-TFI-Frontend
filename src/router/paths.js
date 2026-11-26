@@ -1,0 +1,16 @@
+export const PATHS = {
+  patientLogin: "/login",
+  adminLogin: "/admin/login",
+  adminHome: "/admin",
+  specialties: "/admin/specialties",
+  specialtyNew: "/admin/specialties/new",
+  specialtyEdit: (id) => `/admin/specialties/${id}/edit`,
+  doctors: "/admin/doctors",
+  doctorNew: "/admin/doctors/new",
+  doctorEdit: (id) => `/admin/doctors/${id}/edit`,
+  availability: "/admin/doctors/availability",
+  doctorAvailability: (id) => `/admin/doctors/${id}/availability`,
+  appointmentsSearch: "/admin/patients",
+  bookAppointment: "/patient/book",
+  myAppointments: "/patient/appointments",
+};
