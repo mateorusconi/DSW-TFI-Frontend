@@ -70,7 +70,11 @@ function LoginPatientForm({ onSubmit }) {
         </p>
       )}
 
-      <Button type="submit" loading={isSubmitting} className="min-h-12 text-base">
+      <Button
+        type="submit"
+        loading={isSubmitting}
+        className="min-h-12 text-base"
+      >
         Ingresar Paciente
       </Button>
     </form>

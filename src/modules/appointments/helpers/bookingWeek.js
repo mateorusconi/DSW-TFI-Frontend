@@ -43,6 +43,8 @@ export function buildBookingWeek(weekStart, slots) {
   return days.map(({ day, date, byTime }) => ({
     day,
     date,
-    blocks: [...byTime.values()].sort((a, b) => a.startTime.localeCompare(b.startTime)),
+    blocks: [...byTime.values()].sort((a, b) =>
+      a.startTime.localeCompare(b.startTime),
+    ),
   }));
 }

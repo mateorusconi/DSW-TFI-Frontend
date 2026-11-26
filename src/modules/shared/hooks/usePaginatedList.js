@@ -52,16 +52,11 @@ export function usePaginatedList(
           throw new Error("Respuesta paginada inválida.");
         }
 
-        const lastPage = Math.max(
-          1,
-          Math.ceil(page.total / request.pageSize),
-        );
+        const lastPage = Math.max(1, Math.ceil(page.total / request.pageSize));
 
         if (request.pageIndex > lastPage) {
           setRequest((current) =>
-            current === request
-              ? { ...current, pageIndex: lastPage }
-              : current,
+            current === request ? { ...current, pageIndex: lastPage } : current,
           );
           return;
         }
@@ -94,9 +89,7 @@ export function usePaginatedList(
   function setPageIndex(nextPage) {
     setRequest((current) => {
       const pageIndex =
-        typeof nextPage === "function"
-          ? nextPage(current.pageIndex)
-          : nextPage;
+        typeof nextPage === "function" ? nextPage(current.pageIndex) : nextPage;
 
       if (
         !Number.isInteger(pageIndex) ||

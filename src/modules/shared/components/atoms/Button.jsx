@@ -3,7 +3,8 @@ import { LoaderCircle } from "lucide-react";
 // SOLID O: cada variante es una entrada del objeto; sumar una no cambia el componente
 const VARIANTS = {
   primary: "bg-sky-900 text-white hover:bg-sky-800",
-  secondary: "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50",
+  secondary:
+    "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50",
   danger: "bg-red-700 text-white hover:bg-red-800",
   ghost: "text-slate-600 hover:bg-slate-100",
 };

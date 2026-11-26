@@ -35,7 +35,11 @@ export default function AppointmentsFilters({
   }
 
   return (
-    <form onSubmit={handleSubmit(onApply)} className="mb-4 space-y-4" noValidate>
+    <form
+      onSubmit={handleSubmit(onApply)}
+      className="mb-4 space-y-4"
+      noValidate
+    >
       <fieldset>
         <legend className="mb-3 font-semibold">Criterios de búsqueda</legend>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -88,14 +92,17 @@ export default function AppointmentsFilters({
             </select>
           </div>
 
-          <Input id="appointment-date" label="Fecha" type="date" {...register("date")} />
+          <Input
+            id="appointment-date"
+            label="Fecha"
+            type="date"
+            {...register("date")}
+          />
         </div>
       </fieldset>
 
       <div className="flex flex-wrap items-center gap-3">
-        <Button type="submit">
-          Aplicar filtros
-        </Button>
+        <Button type="submit">Aplicar filtros</Button>
         <Button variant="ghost" onClick={clearFilters}>
           Limpiar
         </Button>

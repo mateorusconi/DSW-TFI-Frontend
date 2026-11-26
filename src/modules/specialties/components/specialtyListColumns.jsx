@@ -14,7 +14,9 @@ export function getSpecialtyListColumns(onDelete) {
     {
       key: "isActive",
       header: "Estado",
-      render: (specialty) => <SpecialtyStatusBadge active={specialty.isActive} />,
+      render: (specialty) => (
+        <SpecialtyStatusBadge active={specialty.isActive} />
+      ),
     },
     {
       key: "actions",

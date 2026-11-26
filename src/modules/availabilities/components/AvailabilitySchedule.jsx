@@ -5,7 +5,13 @@ import Button from "../../shared/components/atoms/Button.jsx";
 import Spinner from "../../shared/components/atoms/Spinner.jsx";
 import Alert from "../../shared/components/molecules/Alert.jsx";
 import { getErrorMessage } from "../../shared/helpers/getErrorMessage.js";
-import { DAYS, fromApi, toApi, UnsupportedScheduleError, validateDays } from "../helpers/availabilityMapper.js";
+import {
+  DAYS,
+  fromApi,
+  toApi,
+  UnsupportedScheduleError,
+  validateDays,
+} from "../helpers/availabilityMapper.js";
 import {
   createAvailabilities,
   getDoctorAvailabilities,
@@ -15,7 +21,11 @@ import DayScheduleRow from "./DayScheduleRow.jsx";
 
 function getScheduleError(error) {
   if (error instanceof UnsupportedScheduleError) return error.message;
-  if (error?.details?.some(({ issue }) => issue === "no_future_slots_available_in_current_month")) {
+  if (
+    error?.details?.some(
+      ({ issue }) => issue === "no_future_slots_available_in_current_month",
+    )
+  ) {
     return "No quedan días de este mes para los días de la semana seleccionados.";
   }
   return getErrorMessage(error);
@@ -58,7 +68,9 @@ export default function AvailabilitySchedule({ doctorId }) {
     setSaveError("");
     setSchedule((current) => ({
       ...current,
-      days: current.days.map((entry) => entry.day === day ? nextValue : entry),
+      days: current.days.map((entry) =>
+        entry.day === day ? nextValue : entry,
+      ),
     }));
   }
 
@@ -91,15 +103,26 @@ export default function AvailabilitySchedule({ doctorId }) {
     <section className="min-w-0 space-y-4 rounded-lg border border-slate-200 bg-white p-4">
       <div>
         <h2 className="text-lg font-semibold">Configuración de horarios</h2>
-        <p className="text-sm text-slate-600">Intervalos automáticos de 30 minutos.</p>
+        <p className="text-sm text-slate-600">
+          Intervalos automáticos de 30 minutos.
+        </p>
       </div>
 
       {loadError ? (
-        <Alert variant="error" actionLabel="Volver a cargar" onAction={retry}>{loadError}</Alert>
+        <Alert variant="error" actionLabel="Volver a cargar" onAction={retry}>
+          {loadError}
+        </Alert>
       ) : !schedule ? (
-        <p role="status" className="flex items-center gap-2"><Spinner /> Cargando horario…</p>
+        <p role="status" className="flex items-center gap-2">
+          <Spinner /> Cargando horario…
+        </p>
       ) : (
-        <form onSubmit={saveSchedule} className="space-y-4" aria-busy={saving} noValidate>
+        <form
+          onSubmit={saveSchedule}
+          className="space-y-4"
+          aria-busy={saving}
+          noValidate
+        >
           {DAYS.map(({ key, label }, index) => (
             <DayScheduleRow
               key={key}
@@ -110,18 +133,26 @@ export default function AvailabilitySchedule({ doctorId }) {
               disabled={saving}
             />
           ))}
-          {validation?.message && <Alert variant="error">{validation.message}</Alert>}
+          {validation?.message && (
+            <Alert variant="error">{validation.message}</Alert>
+          )}
           {saveError && <Alert variant="error">{saveError}</Alert>}
           {saved && (
             <Alert variant="success">
-              Disponibilidad guardada. Se actualizaron los horarios libres hasta fin de mes.
+              Disponibilidad guardada. Se actualizaron los horarios libres hasta
+              fin de mes.
             </Alert>
           )}
           <div className="flex flex-wrap items-center justify-end gap-3">
-            <Link to={PATHS.doctors} className="px-4 py-2 text-sm text-sky-900 underline">
+            <Link
+              to={PATHS.doctors}
+              className="px-4 py-2 text-sm text-sky-900 underline"
+            >
               Cancelar
             </Link>
-            <Button type="submit" loading={saving}>Guardar disponibilidad</Button>
+            <Button type="submit" loading={saving}>
+              Guardar disponibilidad
+            </Button>
           </div>
         </form>
       )}

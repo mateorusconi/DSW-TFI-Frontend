@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { PATHS } from "../../../router/paths.js";
@@ -10,8 +10,8 @@ import Alert from "../../shared/components/molecules/Alert.jsx";
 import PageHeader from "../../shared/components/molecules/PageHeader.jsx";
 import { formatLongDate, startOfWeek } from "../../shared/helpers/dates.js";
 import { getErrorMessage } from "../../shared/helpers/getErrorMessage.js";
-import { getDoctors } from "../../doctors/services/doctorsService.js";
-import { getSpecialties } from "../../specialties/services/specialtiesService.js";
+import { useDoctorsBySpecialty } from "../../doctors/hooks/useDoctorsBySpecialty.js";
+import { useSpecialtyOptions } from "../../specialties/hooks/useSpecialtyOptions.js";
 import BookingConfirmBar from "../components/BookingConfirmBar.jsx";
 import WeekSlotsGrid from "../components/WeekSlotsGrid.jsx";
 import { useDoctorSlots } from "../hooks/useDoctorSlots.js";
@@ -25,66 +25,34 @@ const SLOT_ERRORS = ["APPOINTMENT_CONFLICT", "APPOINTMENT_PAST_DATE"];
 function firstBookableWeek() {
   const today = new Date();
   const monday = startOfWeek(today);
-  if (today.getDay() === 0 || today.getDay() === 6) monday.setDate(monday.getDate() + 7);
+  if (today.getDay() === 0 || today.getDay() === 6)
+    monday.setDate(monday.getDate() + 7);
   return monday;
 }
 
 function BookAppointmentPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [specialties, setSpecialties] = useState([]);
-  const [doctors, setDoctors] = useState([]);
   const [specialtyId, setSpecialtyId] = useState("");
   const [doctorId, setDoctorId] = useState("");
-  const [optionsError, setOptionsError] = useState("");
   const [searchedDoctor, setSearchedDoctor] = useState(null);
   const [weekStart, setWeekStart] = useState(firstBookableWeek);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [notice, setNotice] = useState(null);
 
-  const { slots, loading, error, reload } = useDoctorSlots(searchedDoctor?.id, weekStart);
+  // La página no pide datos: los custom hooks se encargan de la API (SRP y DIP)
+  const { specialties, error: specialtiesError } = useSpecialtyOptions();
+  const { doctors, error: doctorsError } = useDoctorsBySpecialty(specialtyId);
+  const { slots, loading, error, reload } = useDoctorSlots(
+    searchedDoctor?.id,
+    weekStart,
+  );
 
-  // Al montar: las especialidades
-  useEffect(() => {
-    let active = true;
-
-    // shortcut: trae hasta 100 especialidades; si crecen, pedir al back un endpoint sin paginar
-    getSpecialties({ pageIndex: 1, pageSize: 100 })
-      .then((page) => {
-        if (active) setSpecialties(page.data);
-      })
-      .catch((error) => {
-        if (active) setOptionsError(getErrorMessage(error));
-      });
-
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  // Al cambiar la especialidad: sus médicos
-  useEffect(() => {
-    if (!specialtyId) return;
-
-    let active = true;
-
-    getDoctors({ pageIndex: 1, pageSize: 100, specialtyId })
-      .then((page) => {
-        if (active) setDoctors(page.data);
-      })
-      .catch((error) => {
-        if (active) setOptionsError(getErrorMessage(error));
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [specialtyId]);
+  const optionsError = specialtiesError || doctorsError;
 
   function handleSpecialtyChange(event) {
     setSpecialtyId(event.target.value);
     setDoctorId("");
-    setDoctors([]);
     setSearchedDoctor(null);
     setSelectedSlot(null);
   }
@@ -158,7 +126,10 @@ function BookAppointmentPage() {
           id="booking-specialty"
           label="Seleccionar especialidad"
           placeholder="Seleccione una especialidad"
-          options={specialties.map((specialty) => ({ value: specialty.id, label: specialty.name }))}
+          options={specialties.map((specialty) => ({
+            value: specialty.id,
+            label: specialty.name,
+          }))}
           value={specialtyId}
           onChange={handleSpecialtyChange}
         />
@@ -166,8 +137,15 @@ function BookAppointmentPage() {
         <Select
           id="booking-doctor"
           label="Seleccionar doctor"
-          placeholder={specialtyId ? "Seleccione un doctor" : "Primero elegí una especialidad"}
-          options={doctors.map((doctor) => ({ value: doctor.id, label: doctor.name }))}
+          placeholder={
+            specialtyId
+              ? "Seleccione un doctor"
+              : "Primero elegí una especialidad"
+          }
+          options={doctors.map((doctor) => ({
+            value: doctor.id,
+            label: doctor.name,
+          }))}
           value={doctorId}
           onChange={(event) => setDoctorId(event.target.value)}
           disabled={!specialtyId}
@@ -181,14 +159,20 @@ function BookAppointmentPage() {
       {searchedDoctor && (
         <>
           <div className="mb-6 rounded-lg border border-slate-200 bg-white p-4">
-            <p className="font-semibold text-slate-900">{searchedDoctor.name}</p>
-            <p className="text-sm text-slate-600">{searchedDoctor.specialty?.name}</p>
+            <p className="font-semibold text-slate-900">
+              {searchedDoctor.name}
+            </p>
+            <p className="text-sm text-slate-600">
+              {searchedDoctor.specialty?.name}
+            </p>
           </div>
 
           {notice && (
             <Alert
               variant={notice.type}
-              actionLabel={notice.type === "success" ? "Ver mis turnos" : undefined}
+              actionLabel={
+                notice.type === "success" ? "Ver mis turnos" : undefined
+              }
               onAction={
                 notice.type === "success"
                   ? () => navigate(PATHS.myAppointments)

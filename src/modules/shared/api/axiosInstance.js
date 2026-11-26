@@ -19,10 +19,7 @@ instance.interceptors.request.use((config) => {
   if (config.params) {
     config.params = Object.fromEntries(
       Object.entries(config.params).filter(
-        ([, value]) =>
-          value !== "" &&
-          value !== null &&
-          value !== undefined,
+        ([, value]) => value !== "" && value !== null && value !== undefined,
       ),
     );
   }

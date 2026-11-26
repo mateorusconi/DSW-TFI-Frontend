@@ -3,7 +3,8 @@ import { useId } from "react";
 function DayScheduleRow({ dayLabel, value, onChange, error, disabled }) {
   const id = useId();
   const errorId = error ? `${id}-error` : undefined;
-  const timeInputClass = "min-h-10 w-full rounded-md border border-slate-300 px-2 disabled:bg-slate-100";
+  const timeInputClass =
+    "min-h-10 w-full rounded-md border border-slate-300 px-2 disabled:bg-slate-100";
 
   return (
     <fieldset
@@ -19,7 +20,9 @@ function DayScheduleRow({ dayLabel, value, onChange, error, disabled }) {
             aria-label={`Horario activo: ${dayLabel}`}
             className="size-4 accent-sky-900"
             checked={value.active}
-            onChange={(event) => onChange({ ...value, active: event.target.checked })}
+            onChange={(event) =>
+              onChange({ ...value, active: event.target.checked })
+            }
           />
           {value.active ? "Activo" : "Inactivo"}
         </label>
@@ -34,7 +37,9 @@ function DayScheduleRow({ dayLabel, value, onChange, error, disabled }) {
             disabled={!value.active}
             aria-invalid={Boolean(error)}
             aria-describedby={errorId}
-            onChange={(event) => onChange({ ...value, startTime: event.target.value })}
+            onChange={(event) =>
+              onChange({ ...value, startTime: event.target.value })
+            }
           />
         </label>
         <label htmlFor={`${id}-end`} className="grid gap-1 text-sm">
@@ -48,11 +53,17 @@ function DayScheduleRow({ dayLabel, value, onChange, error, disabled }) {
             disabled={!value.active}
             aria-invalid={Boolean(error)}
             aria-describedby={errorId}
-            onChange={(event) => onChange({ ...value, endTime: event.target.value })}
+            onChange={(event) =>
+              onChange({ ...value, endTime: event.target.value })
+            }
           />
         </label>
       </div>
-      {error && <p id={errorId} role="alert" className="mt-2 text-sm text-red-700">{error}</p>}
+      {error && (
+        <p id={errorId} role="alert" className="mt-2 text-sm text-red-700">
+          {error}
+        </p>
+      )}
     </fieldset>
   );
 }

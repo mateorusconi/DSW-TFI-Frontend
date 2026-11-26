@@ -20,7 +20,9 @@ function Input({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-semibold text-slate-800">{label}</label>
+      <label htmlFor={id} className="text-sm font-semibold text-slate-800">
+        {label}
+      </label>
 
       <div className="relative">
         {Icon && (
@@ -48,7 +50,11 @@ function Input({
             aria-pressed={visible}
             className="absolute top-1/2 right-2 -translate-y-1/2 rounded p-1 text-slate-400 hover:text-slate-600"
           >
-            {visible ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
+            {visible ? (
+              <EyeOff size={18} aria-hidden="true" />
+            ) : (
+              <Eye size={18} aria-hidden="true" />
+            )}
           </button>
         )}
       </div>

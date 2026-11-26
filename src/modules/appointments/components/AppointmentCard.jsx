@@ -4,7 +4,8 @@ import StatusBadge from "../../shared/components/atoms/StatusBadge.jsx";
 import { formatLongDate, formatTime } from "../../shared/helpers/dates.js";
 
 function AppointmentCard({ appointment, onCancel }) {
-  const { scheduledAt, doctorName, specialtyName, reason, status } = appointment;
+  const { scheduledAt, doctorName, specialtyName, reason, status } =
+    appointment;
   const canCancel = status === "BOOKED";
 
   return (
@@ -12,7 +13,8 @@ function AppointmentCard({ appointment, onCancel }) {
       <div className="min-w-0 space-y-1">
         <div className="flex flex-wrap items-center gap-2">
           <p className="font-semibold text-slate-900 first-letter:uppercase">
-            {formatLongDate(scheduledAt)}, {formatTime(scheduledAt?.slice(11))} hs
+            {formatLongDate(scheduledAt)}, {formatTime(scheduledAt?.slice(11))}{" "}
+            hs
           </p>
           <StatusBadge status={status} />
         </div>

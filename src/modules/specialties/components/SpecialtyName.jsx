@@ -1,4 +1,12 @@
-import { Baby, Bone, Brain, Eye, FlaskConical, Heart, Stethoscope } from "lucide-react";
+import {
+  Baby,
+  Bone,
+  Brain,
+  Eye,
+  FlaskConical,
+  Heart,
+  Stethoscope,
+} from "lucide-react";
 
 // Ícono según el nombre, como en el mockup; las que no están en la lista usan el estetoscopio.
 // Se guardan los elementos ya armados (no los componentes) para no crear componentes durante el render.
@@ -13,7 +21,9 @@ const ICONS = [
 const DEFAULT_ICON = <Stethoscope size={20} aria-hidden="true" />;
 
 function SpecialtyName({ specialty }) {
-  const icon = ICONS.find(([pattern]) => pattern.test(specialty.name))?.[1] ?? DEFAULT_ICON;
+  const icon =
+    ICONS.find(([pattern]) => pattern.test(specialty.name))?.[1] ??
+    DEFAULT_ICON;
 
   return (
     <div className="flex items-center gap-3">

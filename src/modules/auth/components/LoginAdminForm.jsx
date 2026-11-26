@@ -74,7 +74,11 @@ function LoginAdminForm({ onSubmit }) {
         </p>
       )}
 
-      <Button type="submit" loading={isSubmitting} className="min-h-12 text-base">
+      <Button
+        type="submit"
+        loading={isSubmitting}
+        className="min-h-12 text-base"
+      >
         Iniciar Sesión
         <ArrowRight size={18} aria-hidden="true" />
       </Button>

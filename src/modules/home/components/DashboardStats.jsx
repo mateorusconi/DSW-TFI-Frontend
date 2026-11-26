@@ -9,7 +9,11 @@ const numberFormat = new Intl.NumberFormat("es-AR");
 // Mismos íconos y etiquetas que las tarjetas del mockup; solo la de turnos lleva la etiqueta "Hoy"
 const STATS = [
   { key: "activeDoctors", label: "Doctores activos", icon: BriefcaseMedical },
-  { key: "activeSpecialties", label: "Especialidades activas", icon: LayoutGrid },
+  {
+    key: "activeSpecialties",
+    label: "Especialidades activas",
+    icon: LayoutGrid,
+  },
   {
     key: "confirmedAppointmentsToday",
     label: "Turnos confirmados para hoy",
@@ -34,7 +38,10 @@ function DashboardStats({ date }) {
       })
       .catch((error) => {
         if (!controller.signal.aborted) {
-          const message = getErrorMessage(error, "No se pudieron cargar las estadísticas.");
+          const message = getErrorMessage(
+            error,
+            "No se pudieron cargar las estadísticas.",
+          );
           setResult({ requestKey, error: message });
         }
       });
@@ -52,7 +59,10 @@ function DashboardStats({ date }) {
           const value = currentResult?.stats?.[key];
 
           return (
-            <div key={key} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div
+              key={key}
+              className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+            >
               <div className="mb-6 flex items-start justify-between">
                 <span className="inline-flex rounded-lg bg-primary-50 p-2.5 text-primary-700">
                   <Icon size={22} aria-hidden="true" />
