@@ -37,29 +37,51 @@ function WeekSlotsGrid({
   return (
     <div className="rounded-lg border border-slate-200 bg-white p-4">
       <div className="mb-4 flex items-center justify-between gap-2">
-        <Button variant="ghost" onClick={onPrevWeek} disabled={!canGoPrev} aria-label="Semana anterior">
+        <Button
+          variant="ghost"
+          onClick={onPrevWeek}
+          disabled={!canGoPrev}
+          aria-label="Semana anterior"
+        >
           <ChevronLeft size={20} aria-hidden="true" />
         </Button>
         <h2 className="text-center text-sm font-semibold first-letter:uppercase sm:text-base">
           {title}
         </h2>
-        <Button variant="ghost" onClick={onNextWeek} aria-label="Semana siguiente">
+        <Button
+          variant="ghost"
+          onClick={onNextWeek}
+          aria-label="Semana siguiente"
+        >
           <ChevronRight size={20} aria-hidden="true" />
         </Button>
       </div>
 
-      <ul aria-label="Referencias de horarios" className="mb-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-slate-700">
+      <ul
+        aria-label="Referencias de horarios"
+        className="mb-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-slate-700"
+      >
         <li className="inline-flex items-center gap-1.5">
-          <span aria-hidden="true" className="size-2.5 rounded-full bg-emerald-500" />
+          <span
+            aria-hidden="true"
+            className="size-2.5 rounded-full bg-emerald-500"
+          />
           Disponible
         </li>
         <li className="inline-flex items-center gap-1.5">
-          <span aria-hidden="true" className="size-2.5 rounded-full bg-slate-400" />
+          <span
+            aria-hidden="true"
+            className="size-2.5 rounded-full bg-slate-400"
+          />
           Ocupado
         </li>
       </ul>
 
-      <div className="mb-4 grid grid-cols-5 gap-1 md:hidden" role="group" aria-label="Día de la semana">
+      <div
+        className="mb-4 grid grid-cols-5 gap-1 md:hidden"
+        role="group"
+        aria-label="Día de la semana"
+      >
         {days.map(({ date, day }) => (
           <button
             key={date}
@@ -91,12 +113,15 @@ function WeekSlotsGrid({
               {blocks.length === 0 ? (
                 <p className="text-center text-xs text-slate-600">
                   <span aria-hidden="true">—</span>
-                  <span className="sr-only">Sin horarios informados para este día</span>
+                  <span className="sr-only">
+                    Sin horarios informados para este día
+                  </span>
                 </p>
               ) : (
                 <div className="grid grid-cols-3 gap-2 md:grid-cols-1">
                   {blocks.map(({ startTime, occupied, selectableSlot }) => {
-                    const selected = !occupied && selectableSlot.id === selectedSlotId;
+                    const selected =
+                      !occupied && selectableSlot.id === selectedSlotId;
                     const colors = occupied
                       ? "cursor-not-allowed border-slate-300 bg-slate-200 text-slate-700"
                       : selected
@@ -110,7 +135,9 @@ function WeekSlotsGrid({
                         disabled={occupied}
                         aria-label={`${startTime}, ${occupied ? "ocupado" : "disponible"}`}
                         aria-pressed={occupied ? undefined : selected}
-                        onClick={occupied ? undefined : () => onSelect(selectableSlot)}
+                        onClick={
+                          occupied ? undefined : () => onSelect(selectableSlot)
+                        }
                         className={`min-h-10 rounded-md border px-2 py-1.5 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 ${colors}`}
                       >
                         {startTime}

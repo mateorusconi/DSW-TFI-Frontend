@@ -1,3 +1,5 @@
+import { ROLES } from "../constants/roles.js";
+
 const SESSION_KEY = "session";
 
 function isValidSession(session) {
@@ -6,7 +8,7 @@ function isValidSession(session) {
     typeof session === "object" &&
     typeof session.token === "string" &&
     session.token.trim() !== "" &&
-    ["ADMINISTRADOR", "PACIENTE"].includes(session.role)
+    Object.values(ROLES).includes(session.role)
   );
 }
 

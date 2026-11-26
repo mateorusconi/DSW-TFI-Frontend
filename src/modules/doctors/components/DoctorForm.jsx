@@ -143,7 +143,11 @@ function DoctorForm({
         )}
 
         <div className="flex justify-end gap-3 border-t border-slate-200 pt-5">
-          <Button variant="secondary" onClick={onCancel} disabled={isSubmitting}>
+          <Button
+            variant="secondary"
+            onClick={onCancel}
+            disabled={isSubmitting}
+          >
             Cancelar
           </Button>
 

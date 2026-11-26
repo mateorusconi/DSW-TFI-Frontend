@@ -3,7 +3,12 @@ import { useId, useState } from "react";
 
 // Buscador chico con lupa, como el de los encabezados del mockup.
 // Busca al apretar Enter; con el campo vacío vuelve a mostrar todo.
-function HeaderSearch({ placeholder = "Buscar...", label = "Buscar", onSearch, className = "" }) {
+function HeaderSearch({
+  placeholder = "Buscar...",
+  label = "Buscar",
+  onSearch,
+  className = "",
+}) {
   const inputId = useId();
   const [text, setText] = useState("");
 
@@ -13,8 +18,14 @@ function HeaderSearch({ placeholder = "Buscar...", label = "Buscar", onSearch, c
   }
 
   return (
-    <form role="search" onSubmit={handleSubmit} className={`w-full sm:w-72 ${className}`}>
-      <label htmlFor={inputId} className="sr-only">{label}</label>
+    <form
+      role="search"
+      onSubmit={handleSubmit}
+      className={`w-full sm:w-72 ${className}`}
+    >
+      <label htmlFor={inputId} className="sr-only">
+        {label}
+      </label>
       <div className="relative">
         <Search
           size={18}

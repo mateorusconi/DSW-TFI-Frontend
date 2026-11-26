@@ -2,11 +2,7 @@ import { useId, useState } from "react";
 import { Search } from "lucide-react";
 import Input from "../atoms/Input.jsx";
 
-function SearchBar({
-  placeholder = "Buscar...",
-  onSearch,
-  minLength = 3,
-}) {
+function SearchBar({ placeholder = "Buscar...", onSearch, minLength = 3 }) {
   const inputId = useId();
   const [text, setText] = useState("");
   const [error, setError] = useState("");

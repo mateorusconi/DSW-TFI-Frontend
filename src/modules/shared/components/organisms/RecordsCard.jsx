@@ -27,9 +27,14 @@ function RecordsCard({
   const lastPage = Math.max(1, Math.ceil(total / pageSize));
 
   return (
-    <section aria-labelledby={titleId} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+    <section
+      aria-labelledby={titleId}
+      className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+    >
       <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-        <h2 id={titleId} className="text-lg font-semibold text-primary-700">{title}</h2>
+        <h2 id={titleId} className="text-lg font-semibold text-primary-700">
+          {title}
+        </h2>
         {headerRight}
       </div>
 
@@ -38,7 +43,12 @@ function RecordsCard({
           {error}
         </Alert>
       ) : (
-        <DataTable columns={columns} rows={rows} loading={loading} emptyMessage={emptyMessage} />
+        <DataTable
+          columns={columns}
+          rows={rows}
+          loading={loading}
+          emptyMessage={emptyMessage}
+        />
       )}
 
       {!loading && !error && (

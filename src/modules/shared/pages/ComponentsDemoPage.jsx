@@ -20,18 +20,11 @@ function ComponentsDemoPage() {
   const [filters, setFilters] = useState({ name: "" });
   const { isAuthenticated, user, role } = useAuth();
 
-  const {
-    items,
-    total,
-    pageIndex,
-    setPageIndex,
-    loading,
-    error,
-    reload,
-  } = usePaginatedList(fetchDemoRows, {
-    pageSize: PAGE_SIZE,
-    filters,
-  });
+  const { items, total, pageIndex, setPageIndex, loading, error, reload } =
+    usePaginatedList(fetchDemoRows, {
+      pageSize: PAGE_SIZE,
+      filters,
+    });
 
   function handleSearch(text) {
     setFilters({ name: text });
@@ -40,9 +33,7 @@ function ComponentsDemoPage() {
   return (
     <main className="mx-auto max-w-5xl p-6">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold">
-          Componentes compartidos
-        </h1>
+        <h1 className="text-2xl font-bold">Componentes compartidos</h1>
 
         <button
           type="button"
@@ -55,8 +46,8 @@ function ComponentsDemoPage() {
       </div>
 
       <p className="mb-6 text-sm text-slate-600">
-        Tabla, búsqueda y paginación mediante un custom hook.
-        Los 25 registros son ficticios y no se consulta la API.
+        Tabla, búsqueda y paginación mediante un custom hook. Los 25 registros
+        son ficticios y no se consulta la API.
       </p>
       <AtomsDemo />
 
@@ -77,10 +68,7 @@ function ComponentsDemoPage() {
         </ul>
       </section>
 
-      <SearchBar
-        placeholder="Buscar especialidad..."
-        onSearch={handleSearch}
-      />
+      <SearchBar placeholder="Buscar especialidad..." onSearch={handleSearch} />
 
       {error ? (
         <p
@@ -90,11 +78,7 @@ function ComponentsDemoPage() {
           {error}
         </p>
       ) : (
-        <DataTable
-          columns={COLUMNS}
-          rows={items}
-          loading={loading}
-        />
+        <DataTable columns={COLUMNS} rows={items} loading={loading} />
       )}
 
       {!loading && !error && (

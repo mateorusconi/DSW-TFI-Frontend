@@ -17,6 +17,10 @@ export function getActiveFilters(filters, specialties, doctors) {
       label: "Médico",
       value: doctorName ?? doctorId,
     },
-    { key: "date", label: "Fecha", value: date ? date.split("-").reverse().join("/") : "" },
+    {
+      key: "date",
+      label: "Fecha",
+      value: date ? date.split("-").reverse().join("/") : "",
+    },
   ].filter(({ value }) => value);
 }

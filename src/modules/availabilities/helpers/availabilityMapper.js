@@ -27,22 +27,27 @@ export function fromApi(list) {
     const endTime = API_TIME.exec(range?.endTime)?.[1];
 
     if (!knownDays.has(day) || !startTime || !endTime) {
-      throw new UnsupportedScheduleError("El horario guardado tiene un formato que esta pantalla no puede editar.");
+      throw new UnsupportedScheduleError(
+        "El horario guardado tiene un formato que esta pantalla no puede editar.",
+      );
     }
     if (rangesByDay.has(day)) {
-      throw new UnsupportedScheduleError("Este médico tiene más de un rango en un mismo día. Esta pantalla admite uno; no se modificó su horario.");
+      throw new UnsupportedScheduleError(
+        "Este médico tiene más de un rango en un mismo día. Esta pantalla admite uno; no se modificó su horario.",
+      );
     }
 
     rangesByDay.set(day, { day, active: true, startTime, endTime });
   }
 
-  return DAYS.map(({ key }) =>
-    rangesByDay.get(key) ?? {
-      day: key,
-      active: false,
-      startTime: "08:00",
-      endTime: "16:00",
-    },
+  return DAYS.map(
+    ({ key }) =>
+      rangesByDay.get(key) ?? {
+        day: key,
+        active: false,
+        startTime: "08:00",
+        endTime: "16:00",
+      },
   );
 }
 
@@ -53,7 +58,10 @@ export function validateDays(days) {
   for (const { day, startTime, endTime } of selected) {
     if (!startTime || !endTime) {
       errors[day] = "Ingresá el horario de entrada y salida.";
-    } else if (!HALF_HOUR_TIME.test(startTime) || !HALF_HOUR_TIME.test(endTime)) {
+    } else if (
+      !HALF_HOUR_TIME.test(startTime) ||
+      !HALF_HOUR_TIME.test(endTime)
+    ) {
       errors[day] = "Elegí horarios que terminen en :00 o :30.";
     } else if (startTime >= endTime) {
       errors[day] = "La salida debe ser posterior a la entrada.";
@@ -66,10 +74,12 @@ export function validateDays(days) {
 export function toApi(doctorId, days) {
   return {
     doctorId,
-    days: days.filter(({ active }) => active).map(({ day, startTime, endTime }) => ({
-      day,
-      startTime: `${startTime}:00`,
-      endTime: `${endTime}:00`,
-    })),
+    days: days
+      .filter(({ active }) => active)
+      .map(({ day, startTime, endTime }) => ({
+        day,
+        startTime: `${startTime}:00`,
+        endTime: `${endTime}:00`,
+      })),
   };
 }

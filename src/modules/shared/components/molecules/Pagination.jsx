@@ -26,11 +26,7 @@ function Pagination({
   );
 
   function changePage(nextPage) {
-    if (
-      nextPage < 1 ||
-      nextPage > totalPages ||
-      nextPage === pageIndex
-    ) {
+    if (nextPage < 1 || nextPage > totalPages || nextPage === pageIndex) {
       return;
     }
 

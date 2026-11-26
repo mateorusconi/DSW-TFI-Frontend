@@ -17,7 +17,10 @@ function AppointmentsSearchPage() {
   const options = useAppointmentFilterOptions();
 
   const { items, total, pageIndex, setPageIndex, loading, error, reload } =
-    usePaginatedList(searchAppointments, { pageSize: DEFAULT_PAGE_SIZE, filters });
+    usePaginatedList(searchAppointments, {
+      pageSize: DEFAULT_PAGE_SIZE,
+      filters,
+    });
 
   function removeFilter(key) {
     setFilters((current) => ({ ...current, [key]: "" }));
@@ -37,20 +40,36 @@ function AppointmentsSearchPage() {
         onApply={setFilters}
       />
 
-      {options.loading && <p role="status" className="mb-4">Cargando especialidades y médicos…</p>}
+      {options.loading && (
+        <p role="status" className="mb-4">
+          Cargando especialidades y médicos…
+        </p>
+      )}
       {options.error && (
-        <Alert variant="warning" actionLabel="Reintentar opciones" onAction={options.reload}>
+        <Alert
+          variant="warning"
+          actionLabel="Reintentar opciones"
+          onAction={options.reload}
+        >
           No se pudieron cargar las opciones: {options.error}
         </Alert>
       )}
 
       <FilterChips
-        filters={getActiveFilters(filters, options.specialties, options.doctors)}
+        filters={getActiveFilters(
+          filters,
+          options.specialties,
+          options.doctors,
+        )}
         onRemove={removeFilter}
       />
 
       {error ? (
-        <Alert variant="error" actionLabel="Reintentar búsqueda" onAction={reload}>
+        <Alert
+          variant="error"
+          actionLabel="Reintentar búsqueda"
+          onAction={reload}
+        >
           {error}
         </Alert>
       ) : (

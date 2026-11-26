@@ -21,15 +21,26 @@ function DoctorDetails({ doctor }) {
 }
 
 function DoctorSelect({ doctorId, onSelect }) {
-  const { items, total, loading, error, reload } = usePaginatedList(getDoctors, {
-    pageSize: DOCTOR_OPTIONS_LIMIT,
-  });
+  const { items, total, loading, error, reload } = usePaginatedList(
+    getDoctors,
+    {
+      pageSize: DOCTOR_OPTIONS_LIMIT,
+    },
+  );
 
   if (loading) {
-    return <p role="status" className="flex items-center gap-2"><Spinner /> Cargando médicos…</p>;
+    return (
+      <p role="status" className="flex items-center gap-2">
+        <Spinner /> Cargando médicos…
+      </p>
+    );
   }
   if (error) {
-    return <Alert variant="error" actionLabel="Reintentar" onAction={reload}>{error}</Alert>;
+    return (
+      <Alert variant="error" actionLabel="Reintentar" onAction={reload}>
+        {error}
+      </Alert>
+    );
   }
 
   const doctor = items.find(({ id }) => id === doctorId);
@@ -45,21 +56,31 @@ function DoctorSelect({ doctorId, onSelect }) {
         label="Médico"
         options={options}
         value={doctorId}
-        placeholder={items.length ? "Elegí un médico" : "No hay médicos disponibles"}
+        placeholder={
+          items.length ? "Elegí un médico" : "No hay médicos disponibles"
+        }
         onChange={(event) => onSelect(event.target.value)}
       />
       <DoctorDetails doctor={doctor} />
       {total > DOCTOR_OPTIONS_LIMIT && (
         <p className="text-sm text-slate-600">
-          Se muestran los primeros {DOCTOR_OPTIONS_LIMIT}. Para elegir otro, usá el{" "}
-          <Link to={PATHS.doctors} className="text-sky-900 underline">directorio de médicos</Link>.
+          Se muestran los primeros {DOCTOR_OPTIONS_LIMIT}. Para elegir otro, usá
+          el{" "}
+          <Link to={PATHS.doctors} className="text-sky-900 underline">
+            directorio de médicos
+          </Link>
+          .
         </p>
       )}
     </div>
   );
 }
 
-export default function AvailabilityDoctorPicker({ fixedDoctor, doctorId, onSelect }) {
+export default function AvailabilityDoctorPicker({
+  fixedDoctor,
+  doctorId,
+  onSelect,
+}) {
   return (
     <aside className="space-y-4 rounded-lg border border-slate-200 bg-white p-4">
       <h2 className="text-lg font-semibold">Seleccionar profesional</h2>

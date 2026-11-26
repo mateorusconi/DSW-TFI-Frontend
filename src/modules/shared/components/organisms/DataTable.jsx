@@ -16,11 +16,7 @@ function DataTable({
         <thead>
           <tr>
             {columns.map((column) => (
-              <th
-                key={column.key}
-                scope="col"
-                className={column.className}
-              >
+              <th key={column.key} scope="col" className={column.className}>
                 {column.header}
               </th>
             ))}
@@ -31,10 +27,7 @@ function DataTable({
           {loading ? (
             <tr>
               <td colSpan={columnCount} className="data-table__state">
-                <span
-                  role="status"
-                  className="inline-flex items-center gap-2"
-                >
+                <span role="status" className="inline-flex items-center gap-2">
                   <LoaderCircle
                     className="size-5 animate-spin"
                     aria-hidden="true"

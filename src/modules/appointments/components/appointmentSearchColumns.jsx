@@ -23,7 +23,9 @@ export const appointmentSearchColumns = [
     render: (turno) => (
       <>
         <span className="block">{turno.doctor?.specialty?.name ?? "—"}</span>
-        <span className="text-sm text-slate-600">{turno.doctor?.name ?? "—"}</span>
+        <span className="text-sm text-slate-600">
+          {turno.doctor?.name ?? "—"}
+        </span>
       </>
     ),
   },
@@ -33,13 +35,17 @@ export const appointmentSearchColumns = [
     render: (turno) => (
       <>
         <span className="block">{turno.patient?.fullName || "Sin nombre"}</span>
-        <span className="text-sm text-slate-600">DNI {turno.patient?.dni ?? "—"}</span>
+        <span className="text-sm text-slate-600">
+          DNI {turno.patient?.dni ?? "—"}
+        </span>
       </>
     ),
   },
   {
     key: "appointmentsStatus",
     header: "Estado",
-    render: ({ appointmentsStatus }) => <StatusBadge status={appointmentsStatus} />,
+    render: ({ appointmentsStatus }) => (
+      <StatusBadge status={appointmentsStatus} />
+    ),
   },
 ];

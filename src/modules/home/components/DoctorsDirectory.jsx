@@ -39,7 +39,9 @@ const COLUMNS = [
     key: "specialty",
     header: "Especialidad",
     render: (doctor) => (
-      <span className="text-slate-600">{doctor.specialty?.name ?? "Sin especialidad"}</span>
+      <span className="text-slate-600">
+        {doctor.specialty?.name ?? "Sin especialidad"}
+      </span>
     ),
   },
   {
@@ -47,7 +49,10 @@ const COLUMNS = [
     header: "Acciones",
     className: "text-right",
     render: () => (
-      <Link to={PATHS.doctors} className="text-sm font-semibold text-primary-700 hover:underline">
+      <Link
+        to={PATHS.doctors}
+        className="text-sm font-semibold text-primary-700 hover:underline"
+      >
         Ver Detalle
       </Link>
     ),

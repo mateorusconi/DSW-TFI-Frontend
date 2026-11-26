@@ -11,9 +11,12 @@ function DoctorAvailabilityPage() {
   const fixedDoctor = id && state?.doctor?.id === id ? state.doctor : null;
 
   function selectDoctor(doctorId) {
-    navigate(doctorId ? PATHS.doctorAvailability(doctorId) : PATHS.availability, {
-      replace: true,
-    });
+    navigate(
+      doctorId ? PATHS.doctorAvailability(doctorId) : PATHS.availability,
+      {
+        replace: true,
+      },
+    );
   }
 
   return (

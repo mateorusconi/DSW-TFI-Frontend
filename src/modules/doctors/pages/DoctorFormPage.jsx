@@ -1,11 +1,9 @@
-import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { PATHS } from "../../../router/paths.js";
 
 import Alert from "../../shared/components/molecules/Alert.jsx";
 import PageHeader from "../../shared/components/molecules/PageHeader.jsx";
-import { getErrorMessage } from "../../shared/helpers/getErrorMessage.js";
-import { getSpecialties } from "../../specialties/services/specialtiesService.js";
+import { useSpecialtyOptions } from "../../specialties/hooks/useSpecialtyOptions.js";
 
 import DoctorForm from "../components/DoctorForm.jsx";
 import { createDoctor, updateDoctor } from "../services/doctorsService.js";
@@ -15,36 +13,16 @@ function DoctorFormPage() {
   const location = useLocation();
   const { id } = useParams();
 
-  const [specialtyOptions, setSpecialtyOptions] = useState([]);
-  const [loadingOptions, setLoadingOptions] = useState(true);
-  const [optionsError, setOptionsError] = useState("");
+  const {
+    specialties,
+    loading: loadingOptions,
+    error: optionsError,
+  } = useSpecialtyOptions();
 
-  useEffect(() => {
-    let active = true;
-
-    // shortcut: trae hasta 100 especialidades en una página; si crecen, pedir al back un endpoint sin paginar
-    getSpecialties({ pageIndex: 1, pageSize: 100 })
-      .then((page) => {
-        if (!active) return;
-
-        setSpecialtyOptions(
-          page.data.map((specialty) => ({
-            value: specialty.id,
-            label: specialty.name,
-          })),
-        );
-      })
-      .catch((error) => {
-        if (active) setOptionsError(getErrorMessage(error));
-      })
-      .finally(() => {
-        if (active) setLoadingOptions(false);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, []);
+  const specialtyOptions = specialties.map((specialty) => ({
+    value: specialty.id,
+    label: specialty.name,
+  }));
 
   const isEditing = id !== undefined;
   const doctor = location.state?.doctor;
@@ -59,7 +37,10 @@ function DoctorFormPage() {
           Seleccioná un médico desde el listado para cargar sus datos.
         </p>
 
-        <Link to={PATHS.doctors} className="mt-4 inline-block text-sky-800 underline">
+        <Link
+          to={PATHS.doctors}
+          className="mt-4 inline-block text-sky-800 underline"
+        >
           Volver al listado
         </Link>
       </section>

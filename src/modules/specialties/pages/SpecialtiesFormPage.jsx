@@ -77,7 +77,11 @@ function SpecialtyFormPage() {
         subtitle="Complete la información técnica y administrativa para dar de alta una especialidad médica en el sistema."
         breadcrumb={[
           { label: "Especialidades", to: PATHS.specialties },
-          { label: isEditing ? "Editar Especialidad" : "Agregar Nueva Especialidad" },
+          {
+            label: isEditing
+              ? "Editar Especialidad"
+              : "Agregar Nueva Especialidad",
+          },
         ]}
       />
 
